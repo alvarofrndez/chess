@@ -15,7 +15,6 @@ export const boardStore = defineStore('board', () => {
   */
 
   const board = ref([])
-
   
   function createBoard() {
     let new_board = []
@@ -23,73 +22,64 @@ export const boardStore = defineStore('board', () => {
     for(let i=0; i<8; i++){
       new_board.push([])
       for(let j=0; j<8; j++){
+        let piece = {
+          type: undefined,
+          value: undefined,
+          color: '',
+          posible_move: '',
+          img: ''
+        } 
         if(i == 1){
-          new_board[i].push({
-            type: 1,
-            value: 1
-          });
+          piece.type = 1
+          piece.value = 1
+          piece.img = 'src/assets/images/peon-negro.png'
         }else if(i == 6){
-          new_board[i].push({
-            type: 0,
-            value: 1
-          });
+          piece.type = -1
+          piece.value = 1
+          piece.img = 'src/assets/images/peon-blanco.png'
         }else if(i == 0){
           if(j == 0 || j == 7){
-            new_board[i].push({
-              type: 1,
-              value: 4
-            });
+            piece.type = 1
+            piece.value = 4
           }else if(j == 1 || j == 6){
-            new_board[i].push({
-              type: 1,
-              value: 3
-            });
+            piece.type = 1
+            piece.value = 3
           }else if(j == 2 | j == 5){
-            new_board[i].push({
-              type: 1,
-              value: 2
-            });
+            piece.type = 1
+            piece.value = 2
           }else if (j == 3){
-            new_board[i].push({
-              type: 1,
-              value: 6
-            });
+            piece.type = 1
+            piece.value = 6
           }else if(j == 4){
-            new_board[i].push({
-              type: 1,
-              value: 5
-            });
+            piece.type = 1
+            piece.value = 5
           }
         }else if(i == 7){
           if(j == 0 || j == 7){
-            new_board[i].push({
-              type: 0,
-              value: 4
-            });
+            piece.type = -1
+            piece.value = 4
           }else if(j == 1 || j == 6){
-            new_board[i].push({
-              type: 0,
-              value: 3
-            });
+            piece.type = -1
+            piece.value = 3
           }else if(j == 2 | j == 5){
-            new_board[i].push({
-              type: 0,
-              value: 2
-            });
+            piece.type = -1
+            piece.value = 2
           }else if (j == 3){
-            new_board[i].push({
-              type: 0,
-              value: 5
-            });
+            piece.type = -1
+            piece.value = 5
           }else if(j == 4){
-            new_board[i].push({
-              type: 0,
-              value: 6
-            });
+            piece.type = -1
+            piece.value = 6
           }
         }else{
-          new_board[i].push(0);
+          piece.type = 0
+          piece.value = 0
         }
+
+        // poner el color del fondo de la pieza
+        piece.color = (i + j) % 2 == 0 ? 'white' : 'brown'
+
+        new_board[i].push(piece);
       }
     }
     return new_board
