@@ -350,6 +350,9 @@ export const pieceStore = defineStore('piece', () => {
         // TODO: mejorar la lógica
         let possible_moves = []
 
+        possible_moves.push(canCastling(piece, row, column))
+        possible_moves = possible_moves.flat()
+
         // rectos
         if(operationOnIndex(row + piece.type)){
             if(bs.board[row + piece.type][column].type != piece.type){
@@ -425,7 +428,65 @@ export const pieceStore = defineStore('piece', () => {
             }
         }
 
-        console.log(possible_moves)
+        return possible_moves
+    }
+
+    function canCastling(piece, row, column){
+        let possible_moves = []
+
+        if(piece.type == 1){
+            possible_moves.push(castlingMoves(piece, row, column, 0))
+        }else if(piece.type == -1){
+            possible_moves.push(castlingMoves(piece, row, column, 7))
+        }
+
+        possible_moves = possible_moves.flat()
+        return possible_moves
+    }
+
+    function castlingMoves(piece, row, column, player){
+        let possible_moves = []
+
+        if(row == player && column == 4){
+            let left = true
+            let rigth = true
+
+            if(bs.board[player][0].value == 4 && bs.board[player][0].type == piece.type){
+                for(let j = 3; j > 0; j--){
+                    if(bs.board[player][j].type != 0){
+                        left = false
+                    }
+                }
+            }else{
+                left = false
+            }
+
+
+            if(bs.board[player][7].value == 4 && bs.board[player][7].type == piece.type){
+                for(let j = 5; j < 7; j++){
+                    if(bs.board[player][j].type != 0){
+                        rigth = false
+                    }
+                }
+            }else{
+                rigth = false
+            }
+
+            if(left){
+                possible_moves.push({
+                    row: player,
+                    column: 2
+                })
+            }
+
+            if(rigth){
+                possible_moves.push({
+                    row: player,
+                    column: 6
+                })
+            }
+        }
+
         return possible_moves
     }
 
