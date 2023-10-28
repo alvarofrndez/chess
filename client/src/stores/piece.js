@@ -10,6 +10,7 @@ export const pieceStore = defineStore('piece', () => {
 
         // logica de peón con captura, no coronación
         if(piece.value == 1){
+            // TODO: coronacion, cambiar la pieza a reina(5)
             let initial = false
             let can_pass = false
 
@@ -17,6 +18,7 @@ export const pieceStore = defineStore('piece', () => {
             if((piece.type == -1 && row == 6) || (piece.type == 1 && row == 1)){
                 initial = true
             }
+
 
             // uno hacia alante
             if(bs.board[row + piece.type][column].value == 0){
@@ -30,15 +32,17 @@ export const pieceStore = defineStore('piece', () => {
             }
 
             // dos hacia alante solo en salida
-            if(bs.board[row + piece.type * 2][column].value == 0 && initial && can_pass){
-                if(row + piece.type * 2 >= 0 && row + piece.type * 2 <= 7){
-                    posible_moves.push({
-                        row: row + piece.type * 2,
-                        column: column
-                    })
+            if(initial){
+                if(bs.board[row + piece.type * 2][column].value == 0 && can_pass){
+                    if(row + piece.type * 2 >= 0 && row + piece.type * 2 <= 7){
+                        posible_moves.push({
+                            row: row + piece.type * 2,
+                            column: column
+                        })
+                    }
                 }
             }
-
+            
             // captura izquierda
             if((row + piece.type && column -1) >= 0 && (row + piece.type && column -1) <= 7){
                 if(bs.board[row + piece.type][column - 1].type * -1 == piece.type){
