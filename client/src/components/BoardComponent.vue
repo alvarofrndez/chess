@@ -35,13 +35,13 @@ let player = -1
 
 function elementClicked(piece, row, column){
     // compruebo si la pieza que se ha clickado es un posible movimiento
-    if(piece.posible_move == 'posible-move'){
+    if(piece.possible_move == 'possible-move'){
         // la casilla de la ultima pieza que se clicko que es la que quiero mover la igualo a una casilla vacía
         bs.board[last_clicked.row][last_clicked.column] = {
             type: 0,
             value: 0,
             color: last_clicked.piece.color,
-            posible_move: '',
+            possible_move: '',
             img: ''
         }
 
@@ -74,7 +74,7 @@ function elementClicked(piece, row, column){
         // calculo los posibles movimientos de la nueva pieza
         let posibles_moves = ps.calculateMoves(piece, row, column)
         for(let move of posibles_moves){
-            bs.board[move.row][move.column].posible_move = 'posible-move'
+            bs.board[move.row][move.column].possible_move = 'possible-move'
         }
     }
 }
@@ -82,7 +82,7 @@ function elementClicked(piece, row, column){
 function resetPossibleMoves(){
     for(let line of bs.board){
         for(let piece of line){
-            piece.posible_move = ''
+            piece.possible_move = ''
         }
     }
 }
@@ -92,7 +92,7 @@ function resetPossibleMoves(){
     <section>
         <div v-for="line of bs.board" :key="line">
             <!-- ver si hay alguna manera de hacer un in en vez de un for para poder poner claves primarias a cada pieza -->
-            <article draggable="true" v-for="(piece, index) in line" @click="() => elementClicked(piece, bs.board.indexOf(line), index)"  :class="piece.color + ' ' + piece.posible_move" :key="bs.board.indexOf(line) + ' ' + index">
+            <article draggable="true" v-for="(piece, index) in line" @click="() => elementClicked(piece, bs.board.indexOf(line), index)"  :class="piece.color + ' ' + piece.possible_move" :key="bs.board.indexOf(line) + ' ' + index">
                 {{ piece.value }}
                 <img v-if="piece.img != ''" :src="piece.img" alt="">
             </article>
@@ -131,7 +131,7 @@ function resetPossibleMoves(){
         background-color: brown;
     }
 
-    .posible-move{
+    .possible-move{
         filter: brightness(0.4);
         /* background-color: rgba(162, 162, 162, 0.628); */
     }

@@ -26,9 +26,10 @@ export const boardStore = defineStore('board', () => {
           type: undefined,
           value: undefined,
           color: '',
-          posible_move: '',
+          possible_move: '',
           img: ''
-        } 
+        }
+
         if(i == 1){
           piece.type = 1
           piece.value = 1
@@ -41,35 +42,45 @@ export const boardStore = defineStore('board', () => {
           if(j == 0 || j == 7){
             piece.type = 1
             piece.value = 4
+            piece.img = 'src/assets/images/torre-negra.png'
           }else if(j == 1 || j == 6){
             piece.type = 1
             piece.value = 3
+            piece.img = 'src/assets/images/caballo-negro.png'
           }else if(j == 2 | j == 5){
             piece.type = 1
             piece.value = 2
+            piece.img = 'src/assets/images/alfil-negro.png'
           }else if (j == 3){
             piece.type = 1
-            piece.value = 6
+            piece.value = 5
+            piece.img = 'src/assets/images/reina-negra.png'
           }else if(j == 4){
             piece.type = 1
-            piece.value = 5
+            piece.value = 6
+            piece.img = 'src/assets/images/rey-negro.png'
           }
         }else if(i == 7){
           if(j == 0 || j == 7){
             piece.type = -1
             piece.value = 4
+            piece.img = 'src/assets/images/torre-blanca.png'
           }else if(j == 1 || j == 6){
             piece.type = -1
             piece.value = 3
+            piece.img = 'src/assets/images/caballo-blanco.png'
           }else if(j == 2 | j == 5){
             piece.type = -1
             piece.value = 2
+            piece.img = 'src/assets/images/alfil-blanco.png'
           }else if (j == 3){
             piece.type = -1
             piece.value = 5
+            piece.img = 'src/assets/images/reina-blanca.png'
           }else if(j == 4){
             piece.type = -1
             piece.value = 6
+            piece.img = 'src/assets/images/rey-blanco.png'
           }
         }else{
           piece.type = 0
