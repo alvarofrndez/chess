@@ -15,6 +15,12 @@ export const pieceStore = defineStore('piece', () => {
             possible_moves = towerMoves(piece, row, column)
         }else if(piece.value == 3){
             possible_moves = horseMoves(piece, row, column)
+        }else if(piece.value == 2){
+            possible_moves = bishopMoves(piece, row, column)
+        }else if(piece.value == 5){
+            possible_moves = queenMoves(piece, row, column)
+        }else if(piece.value == 6){
+            possible_moves = kingMoves(piece, row, column)
         }
 
         return possible_moves
@@ -239,7 +245,188 @@ export const pieceStore = defineStore('piece', () => {
     }
 
     function bishopMoves(piece, row, column){
+        // TODO: mejorar los for igual que en las torres
+        let possible_moves = []
+
+        // arriba derecha
+        for(let i = row - 1, j = column + 1; i >= 0 || j <= 7; i--, j++){
+            if(i >= 0 && j <= 7){
+                if(bs.board[i][j].value == 0){
+                    possible_moves.push({
+                        row: i,
+                        column: j
+                    })
+                }else if(bs.board[i][j].type != piece.type){
+                    possible_moves.push({
+                        row: i,
+                        column: j
+                    })
+                    i = -1
+                }else{
+                    i = -1
+                }
+            }
+        }
+
+        // arriba izquierda
+        for(let i = row - 1, j = column - 1; i >= 0 || j >= 0; i--, j--){
+            if(i >= 0 && j >= 0){
+                if(bs.board[i][j].value == 0){
+                    possible_moves.push({
+                        row: i,
+                        column: j
+                    })
+                }else if(bs.board[i][j].type != piece.type){
+                    possible_moves.push({
+                        row: i,
+                        column: j
+                    })
+                    i = -1
+                }else{
+                    i = -1
+                }
+            }
+        }
+
+        // abajo izquierda
+        for(let i = row + 1, j = column - 1; i <= 7 || j >= 0; i++, j--){
+            if(i <= 7 && j >= 0){
+                if(bs.board[i][j].value == 0){
+                    possible_moves.push({
+                        row: i,
+                        column: j
+                    })
+                }else if(bs.board[i][j].type != piece.type){
+                    possible_moves.push({
+                        row: i,
+                        column: j
+                    })
+                    i = 8
+                }else{
+                    i = 8
+                }
+            }
+        }
+
+        // abajo derecha
+        for(let i = row + 1, j = column + 1; i <= 7 || j <= 7; i++, j++){
+            if(i <= 7 && j <= 7){
+                if(bs.board[i][j].value == 0){
+                    possible_moves.push({
+                        row: i,
+                        column: j
+                    })
+                }else if(bs.board[i][j].type != piece.type){
+                    possible_moves.push({
+                        row: i,
+                        column: j
+                    })
+                    i = 8
+                }else{
+                    i = 8
+                }
+            }
+        }
+
+        return possible_moves
+    }
+
+    function queenMoves(piece, row, column){
+        let possible_moves = []
+
+        // lógica de las torres para los movimientos rectos
+        possible_moves.push(towerMoves(piece, row, column))
+
+        // lógica de los alfiles para los movimientos diagonales
+        possible_moves.push(bishopMoves(piece, row, column))
+
+        // aplanar el array
+        possible_moves = possible_moves.flat()
+
+        return possible_moves
+    }
+
+    function kingMoves(piece, row, column){
+        // TODO: mejorar la lógica
+        let possible_moves = []
+
+        // rectos
+        if(operationOnIndex(row + piece.type)){
+            if(bs.board[row + piece.type][column].type != piece.type){
+                possible_moves.push({
+                    row: row + piece.type,
+                    column: column
+                })
+            }
+        }
         
+        if(operationOnIndex(row - piece.type)){
+            if(bs.board[row - piece.type][column].type != piece.type){
+                possible_moves.push({
+                    row: row - piece.type,
+                    column: column
+                })
+            }
+        }
+        
+        if(operationOnIndex(column + piece.type)){
+            if(bs.board[row][column + piece.type].type != piece.type){
+                possible_moves.push({
+                    row: row,
+                    column: column + piece.type
+                })
+            }
+        }
+
+        if(operationOnIndex(column - piece.type)){
+            if(bs.board[row][column - piece.type].type != piece.type){
+                possible_moves.push({
+                    row: row,
+                    column: column - piece.type
+                })
+            }
+        }
+
+
+        // diagonales
+        if(operationOnIndex(row + piece.type) && operationOnIndex(column + piece.type)){
+            if(bs.board[row + piece.type][column + piece.type].type != piece.type){
+                possible_moves.push({
+                    row: row + piece.type,
+                    column: column + piece.type
+                })
+            }
+        }
+
+        if(operationOnIndex(row + piece.type) && operationOnIndex(column - piece.type)){
+            if(bs.board[row + piece.type][column - piece.type].type != piece.type){
+                possible_moves.push({
+                    row: row + piece.type,
+                    column: column - piece.type
+                })
+            }
+        }
+
+        if(operationOnIndex(row - piece.type) && operationOnIndex(column - piece.type)){
+            if(bs.board[row - piece.type][column - piece.type].type != piece.type){
+                possible_moves.push({
+                    row: row - piece.type,
+                    column: column - piece.type
+                })
+            }
+        }
+
+        if(operationOnIndex(row - piece.type) && operationOnIndex(column + piece.type)){
+            if(bs.board[row - piece.type][column + piece.type].type != piece.type){
+                possible_moves.push({
+                    row: row - piece.type,
+                    column: column + piece.type
+                })
+            }
+        }
+
+        console.log(possible_moves)
+        return possible_moves
     }
 
     function operationOnIndex(operation){
