@@ -9,7 +9,7 @@ bs.board = bs.createBoard()
 let last_clicked = {
     piece: {type:undefined}
 }
-let last_move_type = 1
+let player = -1
 // pieza de prueba
 // bs.board[5][1] = {
 //     type: 1,
@@ -34,64 +34,55 @@ let last_move_type = 1
 // }, 1000)
 
 function elementClicked(piece, row, column){
-    console.log(piece.type, last_move_type, last_clicked.piece.type)
-    // si la pieza que quiero mover es de tipo distinto al ultimo movimiento que se ha hecho
-    if(piece.type != last_move_type){
-        // si donde se ha hecho click no es una pieza si no un posible movimiento
-        if(piece.posible_move == 'posible-move'){
-            
-
-                // la casilla de la pieza que quiero mover la igualo a una casilla vacía
-                bs.board[last_clicked.row][last_clicked.column] = {
-                type: 0,
-                value: 0,
-                color: last_clicked.piece.color,
-                posible_move: '',
-                img: ''
-            }
-
-            // si a donde quiero mover la pieza tiene un color de fondo distinto al de la pieza que quiero mover
-            if(piece.color != last_clicked.piece.color){
-                last_clicked.piece.color = piece.color
-            }
-
-            // muevo la pieza que quiero mover a la nueva posición
-            bs.board[row][column] = last_clicked.piece
-
-            // reseteo los posibles moviminetos
-            resetPossibleMoves()
-
-            // paso de turno cambiando el último tipo de movimiento que se ha hecho
-            last_move_type = last_clicked.piece.type
-        }else{
-            // igualo la última pieza que se ha clickaado a la pieza recien clickada
-            last_clicked = {
-                piece: piece,
-                row: row,
-                column: column
-            }
-
-            // reseteo los posibles moviminetos
-            resetPossibleMoves()
-
-            // calculo los posibles movimientos de la nueva pieza
-            let posibles_moves = ps.calculateMoves(piece, row,column)
-            for(let move of posibles_moves){
-                bs.board[move.row][move.column].posible_move = 'posible-move'
-            }
+    // compruebo si la pieza que se ha clickado es un posible movimiento
+    if(piece.posible_move == 'posible-move'){
+        // la casilla de la ultima pieza que se clicko que es la que quiero mover la igualo a una casilla vacía
+        bs.board[last_clicked.row][last_clicked.column] = {
+            type: 0,
+            value: 0,
+            color: last_clicked.piece.color,
+            posible_move: '',
+            img: ''
         }
-    }else{
 
-        if(last_clicked.piece.type != piece.type){
-            console.log('adsadasda ', piece.type, last_move_type, last_clicked.piece.type)
+        // si a donde quiero mover la pieza tiene un color de fondo distinto al de la pieza que quiero mover
+        if(piece.color != last_clicked.piece.color){
+            last_clicked.piece.color = piece.color
+        }
+
+        // muevo la pieza que quiero mover a la nueva posición
+        bs.board[row][column] = last_clicked.piece
+
+        // reseteo los posibles moviminetos
+        resetPossibleMoves()
+
+        // paso de turno cambiando el jugador que le toca mover
+        player *= -1
+    }
+    // si la pieza que se ha pulsado es del tipo del jugador que mueve
+    else if(player == piece.type){
+        // igualo la última pieza que se ha clickado a la pieza recien clickada
+        last_clicked = {
+            piece: piece,
+            row: row,
+            column: column
+        }
+
+        // reseteo los posibles moviminetos
+        resetPossibleMoves()
+
+        // calculo los posibles movimientos de la nueva pieza
+        let posibles_moves = ps.calculateMoves(piece, row, column)
+        for(let move of posibles_moves){
+            bs.board[move.row][move.column].posible_move = 'posible-move'
         }
     }
+}
 
-    function resetPossibleMoves(){
-        for(let line of bs.board){
-            for(let piece of line){
-                piece.posible_move = ''
-            }
+function resetPossibleMoves(){
+    for(let line of bs.board){
+        for(let piece of line){
+            piece.posible_move = ''
         }
     }
 }
