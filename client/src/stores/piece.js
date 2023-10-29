@@ -38,7 +38,6 @@ export const pieceStore = defineStore('piece', () => {
             initial = true
         }
 
-
         // uno hacia alante
         if(bs.board[row + piece.type][column].value == 0){
             if(operationOnIndex(row + piece.type)){

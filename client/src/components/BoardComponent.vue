@@ -45,6 +45,11 @@ function elementClicked(piece, row, column){
             console.log('juego terminado')
         }
 
+        if(isCrowning(piece, row, column)){
+            return
+        }
+        console.log('pasa')
+
         // comprobar si se puede enroque
         if(!canCastling(piece, row, column)){
             // la casilla de la ultima pieza que se clicko que es la que quiero mover la igualo a una casilla vacía
@@ -189,6 +194,74 @@ function canCastling(piece, row, column){
     return false
 }
 
+function isCrowning(piece, row, column){
+    // TODO: refactorizar el codigo en una funcion y meterla en store de piece
+    if(piece.type != last_clicked.piece.type && row == 0){
+        // la casilla de la ultima pieza que se clicko que es la que quiero mover la igualo a una casilla vacía
+        bs.board[last_clicked.row][last_clicked.column] = {
+            type: 0,
+            value: 0,
+            color: last_clicked.piece.color,
+            possible_move: '',
+            img: ''
+        }
+
+        // si a donde quiero mover la pieza tiene un color de fondo distinto al de la pieza que quiero mover
+        if(piece.color != last_clicked.piece.color){
+            last_clicked.piece.color = piece.color
+        }
+
+        // muevo la pieza que quiero mover a la nueva posición y la convierto en dama
+        bs.board[row][column] = {
+            type: last_clicked.piece.type,
+            value: 5,
+            color: last_clicked.piece.color,
+            possible_move: '',
+            img: 'src/assets/images/reina-blanca.png'
+        }
+
+        // reseteo los posibles moviminetos
+        resetPossibleMoves()
+
+        // paso de turno cambiando el jugador que le toca mover
+        player *= -1
+
+        return true
+    }else if(piece.type != last_clicked.piece.type && row == 7){
+        console.log(last_clicked.piece)
+        // la casilla de la ultima pieza que se clicko que es la que quiero mover la igualo a una casilla vacía
+        bs.board[last_clicked.row][last_clicked.column] = {
+            type: 0,
+            value: 0,
+            color: last_clicked.piece.color,
+            possible_move: '',
+            img: ''
+        }
+
+        // si a donde quiero mover la pieza tiene un color de fondo distinto al de la pieza que quiero mover
+        if(piece.color != last_clicked.piece.color){
+            last_clicked.piece.color = piece.color
+        }
+
+        // muevo la pieza que quiero mover a la nueva posición y la convierto en dama
+        bs.board[row][column] = {
+            type: last_clicked.piece.type,
+            value: 5,
+            color: last_clicked.piece.color,
+            possible_move: '',
+            img: 'src/assets/images/reina-negra.png'
+        }
+
+        // reseteo los posibles moviminetos
+        resetPossibleMoves()
+
+        // paso de turno cambiando el jugador que le toca mover
+        player *= -1
+        return true
+    }
+    return false
+}
+
 function resetPossibleMoves(){
     for(let line of bs.board){
         for(let piece of line){
@@ -214,7 +287,6 @@ function newGame(){
         <h1>Turno de {{ player == 1 ? 'negras' : 'blancas' }}</h1>
         <button @click="newGame">Jugar de nuevo</button>
         <div v-for="line of bs.board" :key="line">
-            <!-- ver si hay alguna manera de hacer un in en vez de un for para poder poner claves primarias a cada pieza -->
             <article draggable="true" v-for="(piece, index) in line" @click="() => {if(playing){elementClicked(piece, bs.board.indexOf(line), index)}}"  :class="piece.color + ' ' + piece.possible_move" :key="bs.board.indexOf(line) + ' ' + index">
                 {{ piece.value }}
                 <img v-if="piece.img != ''" :src="piece.img" alt="">
