@@ -12,6 +12,7 @@ let last_clicked = {
 }
 let player = -1
 let playing = ref(true)
+let check = false
 
 // pieza de prueba
 // bs.board[5][1] = {
@@ -37,7 +38,7 @@ let playing = ref(true)
 // }, 1000)
 
 function elementClicked(piece, row, column){
-    // compruebo si la pieza que se ha clickado es un posible movimiento
+    // movimiento - compruebo si la pieza que se ha clickado es un posible movimiento
     if(piece.possible_move == 'possible-move'){
         // finalizar la partida
         if(piece.value == 6){
@@ -45,10 +46,10 @@ function elementClicked(piece, row, column){
             console.log('juego terminado')
         }
 
+        // comprobar si es coronacion
         if(isCrowning(piece, row, column)){
             return
         }
-        console.log('pasa')
 
         // comprobar si se puede enroque
         if(!canCastling(piece, row, column)){
@@ -74,26 +75,69 @@ function elementClicked(piece, row, column){
 
             // paso de turno cambiando el jugador que le toca mover
             player *= -1
+
+            // comprobar si es jaque
+            if(isCheck()){
+                check = true
+            }else{
+                check = false
+            }
         }
     }
-    // si la pieza que se ha pulsado es del tipo del jugador que mueve
+    // selección - si la pieza que se ha pulsado es del tipo del jugador que mueve
     else if(player == piece.type){
-        // igualo la última pieza que se ha clickado a la pieza recien clickada
-        last_clicked = {
-            piece: piece,
-            row: row,
-            column: column
-        }
-
-        // reseteo los posibles moviminetos
-        resetPossibleMoves()
-
-        // calculo los posibles movimientos de la nueva pieza
-        let posibles_moves = ps.calculateMoves(piece, row, column)
-        for(let move of posibles_moves){
-            bs.board[move.row][move.column].possible_move = 'possible-move'
+        if(check){
+            if(piece.value == 6){
+                selectPiece(piece, row, column)
+            }else{
+                // mostar toast de que esta en jaque
+                console.log('estas en jaque')
+            }
+        }else{
+            selectPiece(piece, row, column)
         }
     }
+}
+
+function selectPiece(piece, row, column){
+    // igualo la última pieza que se ha clickado a la pieza recien clickada
+    last_clicked = {
+        piece: piece,
+        row: row,
+        column: column
+    }
+
+    // reseteo los posibles moviminetos
+    resetPossibleMoves()
+
+    // calculo los posibles movimientos de la nueva pieza
+    let posibles_moves = ps.calculateMoves(piece, row, column)
+    for(let move of posibles_moves){
+        bs.board[move.row][move.column].possible_move = 'possible-move'
+    }
+}
+
+function isCheck(){
+    // el tipo de piezas que estan haciendo jaque
+    let type = last_clicked.piece.type
+
+    for(let line of bs.board){
+        for(let piece of line){
+           if(piece.type == type){
+                // todos los posibles movimientos de cada una de las piezas de ese tipo 
+                let possible_moves = ps.calculateMoves(piece, bs.board.indexOf(line), line.indexOf(piece))
+           
+                for(const {row,column} of possible_moves){
+                    // si en los posibles movimientos se encuentra el rey de los otros
+                    if(bs.board[row][column].value == 6 && bs.board[row][column].type != type){
+                        // le estan ajciendo jaque
+                        return true
+                    }
+                }
+            }
+        }
+    }
+    return false
 }
 
 function canCastling(piece, row, column){

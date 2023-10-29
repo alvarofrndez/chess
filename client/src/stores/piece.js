@@ -8,7 +8,6 @@ export const pieceStore = defineStore('piece', () => {
         // console.log('piece ', piece.type, row, column)
         let possible_moves = []
 
-        // logica de peón con captura, no coronación
         if(piece.value == 1){
             possible_moves = pawnMoves(piece, row, column)
         }else if(piece.value == 4){
@@ -29,7 +28,6 @@ export const pieceStore = defineStore('piece', () => {
     function pawnMoves(piece, row, column){
         let possible_moves = []
 
-        // TODO: coronacion, cambiar la pieza a reina(5)
         let initial = false
         let can_pass = false
 
