@@ -4,28 +4,28 @@ import { boardStore } from '@/stores/board';
 export const pieceStore = defineStore('piece', () => {
     const bs = boardStore()
 
-    function calculateMoves(piece, row, column){
+    function calculateMoves(piece, row, column, board = bs.board){
         // console.log('piece ', piece.type, row, column)
         let possible_moves = []
 
         if(piece.value == 1){
-            possible_moves = pawnMoves(piece, row, column)
+            possible_moves = pawnMoves(piece, row, column, board)
         }else if(piece.value == 4){
-            possible_moves = towerMoves(piece, row, column)
+            possible_moves = towerMoves(piece, row, column, board)
         }else if(piece.value == 3){
-            possible_moves = horseMoves(piece, row, column)
+            possible_moves = horseMoves(piece, row, column, board)
         }else if(piece.value == 2){
-            possible_moves = bishopMoves(piece, row, column)
+            possible_moves = bishopMoves(piece, row, column, board)
         }else if(piece.value == 5){
-            possible_moves = queenMoves(piece, row, column)
+            possible_moves = queenMoves(piece, row, column, board)
         }else if(piece.value == 6){
-            possible_moves = kingMoves(piece, row, column)
+            possible_moves = kingMoves(piece, row, column, board)
         }
 
         return possible_moves
     }
 
-    function pawnMoves(piece, row, column){
+    function pawnMoves(piece, row, column, board){
         let possible_moves = []
 
         let initial = false
@@ -37,7 +37,7 @@ export const pieceStore = defineStore('piece', () => {
         }
 
         // uno hacia alante
-        if(bs.board[row + piece.type][column].value == 0){
+        if(board[row + piece.type][column].value == 0){
             if(operationOnIndex(row + piece.type)){
                 can_pass = true
                 possible_moves.push({
@@ -49,7 +49,7 @@ export const pieceStore = defineStore('piece', () => {
 
         // dos hacia alante solo en salida
         if(initial){
-            if(bs.board[row + piece.type * 2][column].value == 0 && can_pass){
+            if(board[row + piece.type * 2][column].value == 0 && can_pass){
                 if(operationOnIndex(row + piece.type * 2)){
                     possible_moves.push({
                         row: row + piece.type * 2,
@@ -61,7 +61,7 @@ export const pieceStore = defineStore('piece', () => {
         
         // captura izquierda
         if(operationOnIndex(row + piece.type) && operationOnIndex(column - 1)){
-            if(bs.board[row + piece.type][column - 1].type * -1 == piece.type){
+            if(board[row + piece.type][column - 1].type * -1 == piece.type){
                 possible_moves.push({
                     row: row + piece.type,
                     column: column - 1
@@ -71,7 +71,7 @@ export const pieceStore = defineStore('piece', () => {
 
         // captura derecha
         if(operationOnIndex(row + piece.type) && operationOnIndex(column + 1)){
-            if(bs.board[row + piece.type][column + 1].type * -1 == piece.type){
+            if(board[row + piece.type][column + 1].type * -1 == piece.type){
                 possible_moves.push({
                     row: row + piece.type,
                     column: column + 1
@@ -82,18 +82,18 @@ export const pieceStore = defineStore('piece', () => {
         return possible_moves
     }
 
-    function towerMoves(piece, row, column){
+    function towerMoves(piece, row, column, board){
         // TODO: refactorizar el codigo ya que es un for muy repetitivo y se puede juntar minimo en dos
         let possible_moves = []
 
         for(let i = row - 1, j = row + 1; i >= 0 || j <=7; i--, j++){
             if(i>=0){
-                if(bs.board[i][column].type == 0){
+                if(board[i][column].type == 0){
                     possible_moves.push({
                         row: i,
                         column: column
                     })
-                }else if(bs.board[i][column].type != piece.type){
+                }else if(board[i][column].type != piece.type){
                     possible_moves.push({
                         row: i,
                         column: column
@@ -104,12 +104,12 @@ export const pieceStore = defineStore('piece', () => {
                 }
             }
             if(j<=7){
-                if(bs.board[j][column].type == 0){
+                if(board[j][column].type == 0){
                     possible_moves.push({
                         row: j,
                         column: column
                     })
-                }else if(bs.board[j][column].type != piece.type){
+                }else if(board[j][column].type != piece.type){
                     possible_moves.push({
                         row: j,
                         column: column
@@ -123,12 +123,12 @@ export const pieceStore = defineStore('piece', () => {
 
         for(let i = column - 1, j = column + 1; i >= 0 || j <=7; i--, j++){
             if(i>=0){
-                if(bs.board[row][i].type == 0){
+                if(board[row][i].type == 0){
                     possible_moves.push({
                         row: row,
                         column: i
                     })
-                }else if(bs.board[row][i].type != piece.type){
+                }else if(board[row][i].type != piece.type){
                     possible_moves.push({
                         row: row,
                         column: i
@@ -139,12 +139,12 @@ export const pieceStore = defineStore('piece', () => {
                 }
             }
             if(j<=7){
-                if(bs.board[row][j].type == 0){
+                if(board[row][j].type == 0){
                     possible_moves.push({
                         row: row,
                         column: j
                     })
-                }else if(bs.board[row][j].type != piece.type){
+                }else if(board[row][j].type != piece.type){
                     possible_moves.push({
                         row: row,
                         column: j
@@ -159,12 +159,12 @@ export const pieceStore = defineStore('piece', () => {
         return possible_moves
     }
 
-    function horseMoves(piece, row, column){
+    function horseMoves(piece, row, column, board){
         let possible_moves = []
 
         // las filas * 2
         if(operationOnIndex(row + piece.type * 2) && operationOnIndex(column + piece.type)){
-            if(bs.board[row + piece.type * 2][column + piece.type].type != piece.type){
+            if(board[row + piece.type * 2][column + piece.type].type != piece.type){
                 possible_moves.push({
                     row: row + piece.type * 2,
                     column: column + piece.type
@@ -173,7 +173,7 @@ export const pieceStore = defineStore('piece', () => {
         }
         
         if(operationOnIndex(row - piece.type * 2) && operationOnIndex(column + piece.type)){
-            if(bs.board[row - piece.type * 2][column + piece.type].type != piece.type){
+            if(board[row - piece.type * 2][column + piece.type].type != piece.type){
                 possible_moves.push({
                     row: row - piece.type * 2,
                     column: column + piece.type
@@ -182,7 +182,7 @@ export const pieceStore = defineStore('piece', () => {
         }
         
         if(operationOnIndex(row + piece.type * 2) && operationOnIndex(column - piece.type)){
-            if(bs.board[row + piece.type * 2][column - piece.type].type != piece.type){
+            if(board[row + piece.type * 2][column - piece.type].type != piece.type){
                 possible_moves.push({
                     row: row + piece.type * 2,
                     column: column - piece.type
@@ -191,7 +191,7 @@ export const pieceStore = defineStore('piece', () => {
         }
         
         if(operationOnIndex(row - piece.type * 2) && (operationOnIndex(column - piece.type))){
-            if(bs.board[row - piece.type * 2][column - piece.type].type != piece.type){
+            if(board[row - piece.type * 2][column - piece.type].type != piece.type){
                 possible_moves.push({
                     row: row - piece.type * 2,
                     column: column - piece.type
@@ -202,7 +202,7 @@ export const pieceStore = defineStore('piece', () => {
 
         // las columnas * 2
         if(operationOnIndex(row + piece.type) && operationOnIndex(column + piece.type * 2)){
-            if(bs.board[row + piece.type][column + piece.type * 2].type != piece.type){
+            if(board[row + piece.type][column + piece.type * 2].type != piece.type){
                 possible_moves.push({
                     row: row + piece.type,
                     column: column + piece.type * 2
@@ -211,7 +211,7 @@ export const pieceStore = defineStore('piece', () => {
         }
         
         if(operationOnIndex(row - piece.type) && operationOnIndex(column + piece.type * 2)){
-            if(bs.board[row - piece.type][column + piece.type * 2].type != piece.type){
+            if(board[row - piece.type][column + piece.type * 2].type != piece.type){
                 possible_moves.push({
                     row: row - piece.type,
                     column: column + piece.type * 2
@@ -220,7 +220,7 @@ export const pieceStore = defineStore('piece', () => {
         }
         
         if(operationOnIndex(row + piece.type) && operationOnIndex(column - piece.type * 2)){
-            if(bs.board[row + piece.type][column - piece.type * 2].type != piece.type){
+            if(board[row + piece.type][column - piece.type * 2].type != piece.type){
                 possible_moves.push({
                     row: row + piece.type,
                     column: column - piece.type * 2
@@ -229,7 +229,7 @@ export const pieceStore = defineStore('piece', () => {
         }
         
         if(operationOnIndex(row - piece.type) && (operationOnIndex(column - piece.type * 2))){
-            if(bs.board[row - piece.type][column - piece.type * 2].type != piece.type){
+            if(board[row - piece.type][column - piece.type * 2].type != piece.type){
                 possible_moves.push({
                     row: row - piece.type,
                     column: column - piece.type * 2
@@ -241,19 +241,19 @@ export const pieceStore = defineStore('piece', () => {
         return possible_moves
     }
 
-    function bishopMoves(piece, row, column){
+    function bishopMoves(piece, row, column, board){
         // TODO: mejorar los for igual que en las torres
         let possible_moves = []
 
         // arriba derecha
         for(let i = row - 1, j = column + 1; i >= 0 || j <= 7; i--, j++){
             if(i >= 0 && j <= 7){
-                if(bs.board[i][j].value == 0){
+                if(board[i][j].value == 0){
                     possible_moves.push({
                         row: i,
                         column: j
                     })
-                }else if(bs.board[i][j].type != piece.type){
+                }else if(board[i][j].type != piece.type){
                     possible_moves.push({
                         row: i,
                         column: j
@@ -268,12 +268,12 @@ export const pieceStore = defineStore('piece', () => {
         // arriba izquierda
         for(let i = row - 1, j = column - 1; i >= 0 || j >= 0; i--, j--){
             if(i >= 0 && j >= 0){
-                if(bs.board[i][j].value == 0){
+                if(board[i][j].value == 0){
                     possible_moves.push({
                         row: i,
                         column: j
                     })
-                }else if(bs.board[i][j].type != piece.type){
+                }else if(board[i][j].type != piece.type){
                     possible_moves.push({
                         row: i,
                         column: j
@@ -288,12 +288,12 @@ export const pieceStore = defineStore('piece', () => {
         // abajo izquierda
         for(let i = row + 1, j = column - 1; i <= 7 || j >= 0; i++, j--){
             if(i <= 7 && j >= 0){
-                if(bs.board[i][j].value == 0){
+                if(board[i][j].value == 0){
                     possible_moves.push({
                         row: i,
                         column: j
                     })
-                }else if(bs.board[i][j].type != piece.type){
+                }else if(board[i][j].type != piece.type){
                     possible_moves.push({
                         row: i,
                         column: j
@@ -308,12 +308,12 @@ export const pieceStore = defineStore('piece', () => {
         // abajo derecha
         for(let i = row + 1, j = column + 1; i <= 7 || j <= 7; i++, j++){
             if(i <= 7 && j <= 7){
-                if(bs.board[i][j].value == 0){
+                if(board[i][j].value == 0){
                     possible_moves.push({
                         row: i,
                         column: j
                     })
-                }else if(bs.board[i][j].type != piece.type){
+                }else if(board[i][j].type != piece.type){
                     possible_moves.push({
                         row: i,
                         column: j
@@ -328,14 +328,14 @@ export const pieceStore = defineStore('piece', () => {
         return possible_moves
     }
 
-    function queenMoves(piece, row, column){
+    function queenMoves(piece, row, column, board){
         let possible_moves = []
 
         // lógica de las torres para los movimientos rectos
-        possible_moves.push(towerMoves(piece, row, column))
+        possible_moves.push(towerMoves(piece, row, column, board))
 
         // lógica de los alfiles para los movimientos diagonales
-        possible_moves.push(bishopMoves(piece, row, column))
+        possible_moves.push(bishopMoves(piece, row, column, board))
 
         // aplanar el array
         possible_moves = possible_moves.flat()
@@ -343,16 +343,16 @@ export const pieceStore = defineStore('piece', () => {
         return possible_moves
     }
 
-    function kingMoves(piece, row, column){
+    function kingMoves(piece, row, column, board){
         // TODO: mejorar la lógica
         let possible_moves = []
 
-        possible_moves.push(canCastling(piece, row, column))
+        possible_moves.push(canCastling(piece, row, column, board))
         possible_moves = possible_moves.flat()
 
         // rectos
         if(operationOnIndex(row + piece.type)){
-            if(bs.board[row + piece.type][column].type != piece.type){
+            if(board[row + piece.type][column].type != piece.type){
                 possible_moves.push({
                     row: row + piece.type,
                     column: column
@@ -361,7 +361,7 @@ export const pieceStore = defineStore('piece', () => {
         }
         
         if(operationOnIndex(row - piece.type)){
-            if(bs.board[row - piece.type][column].type != piece.type){
+            if(board[row - piece.type][column].type != piece.type){
                 possible_moves.push({
                     row: row - piece.type,
                     column: column
@@ -370,7 +370,7 @@ export const pieceStore = defineStore('piece', () => {
         }
         
         if(operationOnIndex(column + piece.type)){
-            if(bs.board[row][column + piece.type].type != piece.type){
+            if(board[row][column + piece.type].type != piece.type){
                 possible_moves.push({
                     row: row,
                     column: column + piece.type
@@ -379,7 +379,7 @@ export const pieceStore = defineStore('piece', () => {
         }
 
         if(operationOnIndex(column - piece.type)){
-            if(bs.board[row][column - piece.type].type != piece.type){
+            if(board[row][column - piece.type].type != piece.type){
                 possible_moves.push({
                     row: row,
                     column: column - piece.type
@@ -390,7 +390,7 @@ export const pieceStore = defineStore('piece', () => {
 
         // diagonales
         if(operationOnIndex(row + piece.type) && operationOnIndex(column + piece.type)){
-            if(bs.board[row + piece.type][column + piece.type].type != piece.type){
+            if(board[row + piece.type][column + piece.type].type != piece.type){
                 possible_moves.push({
                     row: row + piece.type,
                     column: column + piece.type
@@ -399,7 +399,7 @@ export const pieceStore = defineStore('piece', () => {
         }
 
         if(operationOnIndex(row + piece.type) && operationOnIndex(column - piece.type)){
-            if(bs.board[row + piece.type][column - piece.type].type != piece.type){
+            if(board[row + piece.type][column - piece.type].type != piece.type){
                 possible_moves.push({
                     row: row + piece.type,
                     column: column - piece.type
@@ -408,7 +408,7 @@ export const pieceStore = defineStore('piece', () => {
         }
 
         if(operationOnIndex(row - piece.type) && operationOnIndex(column - piece.type)){
-            if(bs.board[row - piece.type][column - piece.type].type != piece.type){
+            if(board[row - piece.type][column - piece.type].type != piece.type){
                 possible_moves.push({
                     row: row - piece.type,
                     column: column - piece.type
@@ -417,7 +417,7 @@ export const pieceStore = defineStore('piece', () => {
         }
 
         if(operationOnIndex(row - piece.type) && operationOnIndex(column + piece.type)){
-            if(bs.board[row - piece.type][column + piece.type].type != piece.type){
+            if(board[row - piece.type][column + piece.type].type != piece.type){
                 possible_moves.push({
                     row: row - piece.type,
                     column: column + piece.type
@@ -428,29 +428,29 @@ export const pieceStore = defineStore('piece', () => {
         return possible_moves
     }
 
-    function canCastling(piece, row, column){
+    function canCastling(piece, row, column, board){
         let possible_moves = []
 
         if(piece.type == 1){
-            possible_moves.push(castlingMoves(piece, row, column, 0))
+            possible_moves.push(castlingMoves(piece, row, column, 0, board))
         }else if(piece.type == -1){
-            possible_moves.push(castlingMoves(piece, row, column, 7))
+            possible_moves.push(castlingMoves(piece, row, column, 7, board))
         }
 
         possible_moves = possible_moves.flat()
         return possible_moves
     }
 
-    function castlingMoves(piece, row, column, player){
+    function castlingMoves(piece, row, column, player, board){
         let possible_moves = []
 
         if(row == player && column == 4){
             let left = true
             let rigth = true
 
-            if(bs.board[player][0].value == 4 && bs.board[player][0].type == piece.type){
+            if(board[player][0].value == 4 && board[player][0].type == piece.type){
                 for(let j = 3; j > 0; j--){
-                    if(bs.board[player][j].type != 0){
+                    if(board[player][j].type != 0){
                         left = false
                     }
                 }
@@ -459,9 +459,9 @@ export const pieceStore = defineStore('piece', () => {
             }
 
 
-            if(bs.board[player][7].value == 4 && bs.board[player][7].type == piece.type){
+            if(board[player][7].value == 4 && board[player][7].type == piece.type){
                 for(let j = 5; j < 7; j++){
-                    if(bs.board[player][j].type != 0){
+                    if(board[player][j].type != 0){
                         rigth = false
                     }
                 }
