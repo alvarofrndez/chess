@@ -195,7 +195,6 @@ function isCheck(board = bs.board, last_click = last_clicked){
 }
 
 function canCastling(piece, row, column){
-    // TODO: solucionar bug la posicion de la torre se queda como espacio en blanco pero en el ajedrez se ve como torre
     // TODO: mejorar codigo pasar al movimiento de la torre la fila y separarlo en otra funcion y el del rey hacer lo mismo
     // TODO: comprobar para cada torre si no se ha movido antes
     // TODO: la comprobacion del rey deberia hacerse en los posibles movimientos del enroque para que no se añada

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite && prettier --write src",
+    "start": "vite && prettier --write src",
     "build": "vite build",
     "preview": "vite preview",
     "test:unit": "vitest",

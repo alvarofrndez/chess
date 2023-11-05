@@ -119,7 +119,7 @@ export const pieceStore = defineStore('piece', () => {
 
             // si el movimiento está dentro del tablero
             if(operationOnIndex(new_row) && operationOnIndex(new_column))
-                addMove(new_row, new_column, possible_moves, piece, board)
+                addPosibleMove(new_row, new_column, board, piece, possible_moves)
         } 
         
         return possible_moves
@@ -177,7 +177,7 @@ export const pieceStore = defineStore('piece', () => {
             const new_column = column + move.column
 
             if(operationOnIndex(new_row) && operationOnIndex(new_column))
-                addMove(new_row, new_column, possible_moves, piece, board)
+                addPosibleMove(new_row, new_column, board, piece, possible_moves)
         }
 
         possible_moves.push(canCastling(piece, row, column, board))
@@ -265,17 +265,6 @@ export const pieceStore = defineStore('piece', () => {
         }
 
         return false
-    }
-
-    function addMove(row, column, possible_moves, piece, board) {
-        // TODO: quitar esta funcion y utilizar solo la de arriba
-        // si el tipo de la piza es distinto al que mueve 
-        if (board[row][column].type !== piece.type) {
-            possible_moves.push({
-                row: row,
-                column: column
-            })
-        }
     }
 
     function operationOnIndex(operation){
