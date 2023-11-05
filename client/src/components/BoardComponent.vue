@@ -18,13 +18,6 @@ let king_first_move = {
     black: true
 }
 
-// pieza de prueba
-// bs.board[5][1] = {
-//     type: 1,
-//     value:1,
-//     color: 'white'
-// }
-
 // arrastar las piezas en vez de clickar
 // setTimeout(() => {
 //     let pieces = document.getElementsByTagName('article')
@@ -240,31 +233,31 @@ function canCastling(piece, row, column){
                     bs.board[0][0] = {
                         type: 0,
                         value: 0,
-                        color: last_clicked.piece.color,
+                        color: bs.board[0][0].color,
                         possible_move: '',
                         img: ''
                     }
                     bs.board[0][3] = {
-                        type: piece.type,
+                        type: last_clicked.piece.type,
                         value: 4,
                         possible_move: '',
                         img : 'src/assets/images/torre-negra.png',
-                        color : 'brown'
+                        color : bs.board[0][3].color
                     }
                 }else if(column == 6){
                     bs.board[0][7] = {
                         type: 0,
                         value: 0,
-                        color: last_clicked.piece.color,
+                        color: bs.board[0][7].color,
                         possible_move: '',
                         img: ''
                     }
                     bs.board[0][5] = {
-                        type: piece.type,
+                        type: last_clicked.piece.type,
                         value: 4,
                         possible_move: '',
                         img : 'src/assets/images/torre-negra.png',
-                        color : 'brown'
+                        color : bs.board[0][5].color
                     }
                 }
             }else if(row == 7){
@@ -272,31 +265,31 @@ function canCastling(piece, row, column){
                     bs.board[7][0] = {
                         type: 0,
                         value: 0,
-                        color: last_clicked.piece.color,
+                        color: bs.board[7][0].color,
                         possible_move: '',
                         img: ''
                     }
                     bs.board[7][3] = {
-                        type: piece.type,
+                        type: last_clicked.piece.type,
                         value: 4,
                         possible_move: '',
                         img : 'src/assets/images/torre-blanca.png',
-                        color : 'white'
+                        color : bs.board[7][3].color
                     }
                 }else if(column == 6){
                     bs.board[7][7] = {
                         type: 0,
                         value: 0,
-                        color: last_clicked.piece.color,
+                        color: bs.board[7][7].color,
                         possible_move: '',
                         img: ''
                     }
                     bs.board[7][5] = {
-                        type: piece.type,
+                        type: last_clicked.piece.type,
                         value: 4,
                         possible_move: '',
                         img : 'src/assets/images/torre-blanca.png',
-                        color : 'white'
+                        color : bs.board[7][5].color
                     }
                 }
             }
@@ -410,7 +403,6 @@ function newGame(){
         <button @click="newGame">Jugar de nuevo</button>
         <div v-for="line of bs.board" :key="line">
             <article draggable="true" v-for="(piece, index) in line" @click="() => {if(playing){elementClicked(piece, bs.board.indexOf(line), index)}}"  :class="piece.color + ' ' + piece.possible_move" :key="bs.board.indexOf(line) + ' ' + index">
-                {{ piece.value }}
                 <img v-if="piece.img != ''" :src="piece.img" alt="">
             </article>
         </div>
@@ -419,8 +411,8 @@ function newGame(){
 
 <style scoped>
     section{
-        width: 1000px;
-        height: 1000px;
+        width: 600px;
+        height: 600px;
     }
 
     div{
@@ -433,11 +425,14 @@ function newGame(){
         border: 1px solid black;
         width: calc(100% / 8);
         height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     img{
-        height: 100px;
-        width: 100px;
+        height: 60px;
+        width: 60px;
     }
 
     .white{

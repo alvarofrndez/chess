@@ -5,7 +5,6 @@ export const pieceStore = defineStore('piece', () => {
     const bs = boardStore()
 
     function calculateMoves(piece, row, column, board = bs.board){
-        // console.log('piece ', piece.type, row, column)
         let possible_moves = []
 
         if(piece.value == 1){
@@ -83,78 +82,19 @@ export const pieceStore = defineStore('piece', () => {
     }
 
     function towerMoves(piece, row, column, board){
-        // TODO: refactorizar el codigo ya que es un for muy repetitivo y se puede juntar minimo en dos
         let possible_moves = []
 
-        for(let i = row - 1, j = row + 1; i >= 0 || j <=7; i--, j++){
-            if(i>=0){
-                if(board[i][column].type == 0){
-                    possible_moves.push({
-                        row: i,
-                        column: column
-                    })
-                }else if(board[i][column].type != piece.type){
-                    possible_moves.push({
-                        row: i,
-                        column: column
-                    })
-                    i = -1
-                }else{
-                    i = -1
-                }
-            }
-            if(j<=7){
-                if(board[j][column].type == 0){
-                    possible_moves.push({
-                        row: j,
-                        column: column
-                    })
-                }else if(board[j][column].type != piece.type){
-                    possible_moves.push({
-                        row: j,
-                        column: column
-                    })
-                    j = 8
-                }else{
-                    j = 8
-                }
-            }
-        }
+        // izquierda
+        findMovesInDirection(row, column, -1, 0, board, piece, possible_moves)
 
-        for(let i = column - 1, j = column + 1; i >= 0 || j <=7; i--, j++){
-            if(i>=0){
-                if(board[row][i].type == 0){
-                    possible_moves.push({
-                        row: row,
-                        column: i
-                    })
-                }else if(board[row][i].type != piece.type){
-                    possible_moves.push({
-                        row: row,
-                        column: i
-                    })
-                    i = -1
-                }else{
-                    i = -1
-                }
-            }
-            if(j<=7){
-                if(board[row][j].type == 0){
-                    possible_moves.push({
-                        row: row,
-                        column: j
-                    })
-                }else if(board[row][j].type != piece.type){
-                    possible_moves.push({
-                        row: row,
-                        column: j
-                    })
-                    j = 8
-                }else{
-                    j = 8
-                }
-            }
-        }
+        // derecha
+        findMovesInDirection(row, column, 1, 0, board, piece, possible_moves)
+
+        // arriba
+        findMovesInDirection(row, column, 0, -1, board, piece, possible_moves)
+
+        // abajo
+        findMovesInDirection(row, column, 0, 1, board, piece, possible_moves)
 
         return possible_moves
     }
@@ -162,168 +102,43 @@ export const pieceStore = defineStore('piece', () => {
     function horseMoves(piece, row, column, board){
         let possible_moves = []
 
-        // las filas * 2
-        if(operationOnIndex(row + piece.type * 2) && operationOnIndex(column + piece.type)){
-            if(board[row + piece.type * 2][column + piece.type].type != piece.type){
-                possible_moves.push({
-                    row: row + piece.type * 2,
-                    column: column + piece.type
-                })
-            }
-        }
-        
-        if(operationOnIndex(row - piece.type * 2) && operationOnIndex(column + piece.type)){
-            if(board[row - piece.type * 2][column + piece.type].type != piece.type){
-                possible_moves.push({
-                    row: row - piece.type * 2,
-                    column: column + piece.type
-                })
-            }
-        }
-        
-        if(operationOnIndex(row + piece.type * 2) && operationOnIndex(column - piece.type)){
-            if(board[row + piece.type * 2][column - piece.type].type != piece.type){
-                possible_moves.push({
-                    row: row + piece.type * 2,
-                    column: column - piece.type
-                })
-            }
-        }
-        
-        if(operationOnIndex(row - piece.type * 2) && (operationOnIndex(column - piece.type))){
-            if(board[row - piece.type * 2][column - piece.type].type != piece.type){
-                possible_moves.push({
-                    row: row - piece.type * 2,
-                    column: column - piece.type
-                })
-            }
-        }
+        const horse_moves = [
+            { row: -2, column: -1 },
+            { row: -2, column: 1 },
+            { row: -1, column: -2 },
+            { row: -1, column: 2 },
+            { row: 1, column: -2 },
+            { row: 1, column: 2 },
+            { row: 2, column: -1 },
+            { row: 2, column: 1 },
+        ];
+    
+        for (let move of horse_moves) {
+            const new_row = row + move.row
+            const new_column = column + move.column
 
-
-        // las columnas * 2
-        if(operationOnIndex(row + piece.type) && operationOnIndex(column + piece.type * 2)){
-            if(board[row + piece.type][column + piece.type * 2].type != piece.type){
-                possible_moves.push({
-                    row: row + piece.type,
-                    column: column + piece.type * 2
-                })
-            }
-        }
+            // si el movimiento está dentro del tablero
+            if(operationOnIndex(new_row) && operationOnIndex(new_column))
+                addMove(new_row, new_column, possible_moves, piece, board)
+        } 
         
-        if(operationOnIndex(row - piece.type) && operationOnIndex(column + piece.type * 2)){
-            if(board[row - piece.type][column + piece.type * 2].type != piece.type){
-                possible_moves.push({
-                    row: row - piece.type,
-                    column: column + piece.type * 2
-                })
-            }
-        }
-        
-        if(operationOnIndex(row + piece.type) && operationOnIndex(column - piece.type * 2)){
-            if(board[row + piece.type][column - piece.type * 2].type != piece.type){
-                possible_moves.push({
-                    row: row + piece.type,
-                    column: column - piece.type * 2
-                })
-            }
-        }
-        
-        if(operationOnIndex(row - piece.type) && (operationOnIndex(column - piece.type * 2))){
-            if(board[row - piece.type][column - piece.type * 2].type != piece.type){
-                possible_moves.push({
-                    row: row - piece.type,
-                    column: column - piece.type * 2
-                })
-            }
-        }
-
-
         return possible_moves
     }
 
     function bishopMoves(piece, row, column, board){
-        // TODO: mejorar los for igual que en las torres
         let possible_moves = []
 
-        // arriba derecha
-        for(let i = row - 1, j = column + 1; i >= 0 || j <= 7; i--, j++){
-            if(i >= 0 && j <= 7){
-                if(board[i][j].value == 0){
-                    possible_moves.push({
-                        row: i,
-                        column: j
-                    })
-                }else if(board[i][j].type != piece.type){
-                    possible_moves.push({
-                        row: i,
-                        column: j
-                    })
-                    i = -1
-                }else{
-                    i = -1
-                }
-            }
-        }
-
         // arriba izquierda
-        for(let i = row - 1, j = column - 1; i >= 0 || j >= 0; i--, j--){
-            if(i >= 0 && j >= 0){
-                if(board[i][j].value == 0){
-                    possible_moves.push({
-                        row: i,
-                        column: j
-                    })
-                }else if(board[i][j].type != piece.type){
-                    possible_moves.push({
-                        row: i,
-                        column: j
-                    })
-                    i = -1
-                }else{
-                    i = -1
-                }
-            }
-        }
+        findMovesInDirection(row, column, -1, -1, board, piece, possible_moves)
+
+        // arriba derecha
+        findMovesInDirection(row, column, -1, 1, board, piece, possible_moves)
 
         // abajo izquierda
-        for(let i = row + 1, j = column - 1; i <= 7 || j >= 0; i++, j--){
-            if(i <= 7 && j >= 0){
-                if(board[i][j].value == 0){
-                    possible_moves.push({
-                        row: i,
-                        column: j
-                    })
-                }else if(board[i][j].type != piece.type){
-                    possible_moves.push({
-                        row: i,
-                        column: j
-                    })
-                    i = 8
-                }else{
-                    i = 8
-                }
-            }
-        }
+        findMovesInDirection(row, column, 1, -1, board, piece, possible_moves)
 
         // abajo derecha
-        for(let i = row + 1, j = column + 1; i <= 7 || j <= 7; i++, j++){
-            if(i <= 7 && j <= 7){
-                if(board[i][j].value == 0){
-                    possible_moves.push({
-                        row: i,
-                        column: j
-                    })
-                }else if(board[i][j].type != piece.type){
-                    possible_moves.push({
-                        row: i,
-                        column: j
-                    })
-                    i = 8
-                }else{
-                    i = 8
-                }
-            }
-        }
+        findMovesInDirection(row, column, 1, 1, board, piece, possible_moves)
 
         return possible_moves
     }
@@ -344,86 +159,29 @@ export const pieceStore = defineStore('piece', () => {
     }
 
     function kingMoves(piece, row, column, board){
-        // TODO: mejorar la lógica
         let possible_moves = []
+
+        const king_moves = [
+            { row: 1, column : 0},
+            { row: -1, column : 0},
+            { row: 0, column : 1},
+            { row: 0, column : -1},
+            { row: 1, column : 1},
+            { row: 1, column : -1},
+            { row: -1, column : 1},
+            { row: -1, column : -1},
+        ]
+
+        for(let move of king_moves){
+            const new_row = row + move.row
+            const new_column = column + move.column
+
+            if(operationOnIndex(new_row) && operationOnIndex(new_column))
+                addMove(new_row, new_column, possible_moves, piece, board)
+        }
 
         possible_moves.push(canCastling(piece, row, column, board))
         possible_moves = possible_moves.flat()
-
-        // rectos
-        if(operationOnIndex(row + piece.type)){
-            if(board[row + piece.type][column].type != piece.type){
-                possible_moves.push({
-                    row: row + piece.type,
-                    column: column
-                })
-            }
-        }
-        
-        if(operationOnIndex(row - piece.type)){
-            if(board[row - piece.type][column].type != piece.type){
-                possible_moves.push({
-                    row: row - piece.type,
-                    column: column
-                })
-            }
-        }
-        
-        if(operationOnIndex(column + piece.type)){
-            if(board[row][column + piece.type].type != piece.type){
-                possible_moves.push({
-                    row: row,
-                    column: column + piece.type
-                })
-            }
-        }
-
-        if(operationOnIndex(column - piece.type)){
-            if(board[row][column - piece.type].type != piece.type){
-                possible_moves.push({
-                    row: row,
-                    column: column - piece.type
-                })
-            }
-        }
-
-
-        // diagonales
-        if(operationOnIndex(row + piece.type) && operationOnIndex(column + piece.type)){
-            if(board[row + piece.type][column + piece.type].type != piece.type){
-                possible_moves.push({
-                    row: row + piece.type,
-                    column: column + piece.type
-                })
-            }
-        }
-
-        if(operationOnIndex(row + piece.type) && operationOnIndex(column - piece.type)){
-            if(board[row + piece.type][column - piece.type].type != piece.type){
-                possible_moves.push({
-                    row: row + piece.type,
-                    column: column - piece.type
-                })
-            }
-        }
-
-        if(operationOnIndex(row - piece.type) && operationOnIndex(column - piece.type)){
-            if(board[row - piece.type][column - piece.type].type != piece.type){
-                possible_moves.push({
-                    row: row - piece.type,
-                    column: column - piece.type
-                })
-            }
-        }
-
-        if(operationOnIndex(row - piece.type) && operationOnIndex(column + piece.type)){
-            if(board[row - piece.type][column + piece.type].type != piece.type){
-                possible_moves.push({
-                    row: row - piece.type,
-                    column: column + piece.type
-                })
-            }
-        }
 
         return possible_moves
     }
@@ -485,6 +243,39 @@ export const pieceStore = defineStore('piece', () => {
         }
 
         return possible_moves
+    }
+
+    function findMovesInDirection(row, column, row_increment, column_increment, board, piece, possible_moves){
+        // cada posicion en una dirección sin salir del tablero
+        for(let i = row + row_increment, j = column + column_increment; i >= 0 && i <= 7 && j >= 0 && j <= 7; i += row_increment, j += column_increment){
+            if(addPosibleMove(i, j, board, piece, possible_moves))
+                break;
+        }
+    }
+
+    function addPosibleMove(i, j, board, piece, possible_moves){
+        // si es una casilla vacia o hay una pieza del rival
+        if( board[i][j].type == 0){
+            possible_moves.push({ row: i, column: j });
+        }else if( board[i][j].type != piece.type){
+            possible_moves.push({ row: i, column: j });
+            return true
+        }else{
+            return true
+        }
+
+        return false
+    }
+
+    function addMove(row, column, possible_moves, piece, board) {
+        // TODO: quitar esta funcion y utilizar solo la de arriba
+        // si el tipo de la piza es distinto al que mueve 
+        if (board[row][column].type !== piece.type) {
+            possible_moves.push({
+                row: row,
+                column: column
+            })
+        }
     }
 
     function operationOnIndex(operation){
