@@ -11,7 +11,7 @@ const sk = socketStore()
         <div class='wrapper'>
             <nav>
                 <RouterLink to='/'>Home</RouterLink>
-                <RouterLink to='/about'>About</RouterLink>
+                <RouterLink to='/play'>Play</RouterLink>
             </nav>
             <div class='online'>
                 <label>online {{ sk.online }}</label>

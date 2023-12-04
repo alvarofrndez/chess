@@ -1,10 +1,9 @@
 <script setup>
-import BoardComponent from '@/components/BoardComponent.vue';
 </script>
 
 <template>
   <main>
-    <BoardComponent></BoardComponent>
+    <RouterLink to='/play'>Empieza a jugar</RouterLink>
   </main>
 </template>
 

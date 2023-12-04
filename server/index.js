@@ -3,6 +3,7 @@ const express = require('express');
 const Server = require('socket.io').Server
 
 const PORT = 3000
+const HOST = '0.0.0.0';
 const app = express()
 
 const cors_options = {
@@ -15,7 +16,7 @@ const cors_options = {
 const codi = 'utf-8'
 
 const server = require('http').createServer(app)
-server.listen(PORT, () => console.log(`escuchando en el puerto: ${PORT}`))
+server.listen(PORT, HOST, () => console.log(`escuchando en el puerto: ${PORT}`))
 
 const io = new Server(server, {
     cors: cors_options, 

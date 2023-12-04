@@ -1,0 +1,18 @@
+@import './variabe';
+@import './mixin';
+
+body{
+    margin: 0 auto;
+
+    #app{
+        // size
+        min-width: 100vw;
+        min-height: 100vh;
+
+        // display
+        @include flex(column, center, space-between);
+
+        // decoration
+        background-color: $h-c-white;
+    }
+}
