@@ -1,17 +1,18 @@
 <script setup>
-import {ref} from 'vue'
-import {boardStore} from '@/stores/board.js'
-import {pieceStore} from '@/stores/piece.js'
+// import {ref} from 'vue'
+import {boardStore} from '@/stores/board'
+import {pieceStore} from '@/stores/piece'
+import {socketStore} from '@/stores/socket';
 
 const bs = boardStore()
 const ps = pieceStore()
+const sk = socketStore()
 
 bs.board = bs.createBoard()
 let last_clicked = {
     piece: {type:undefined}
 }
-let player = -1
-let playing = ref(true)
+let player_turn = -1
 let check = false
 let king_first_move = {
     white: true,
@@ -35,18 +36,19 @@ let king_first_move = {
 // }, 1000)
 
 function elementClicked(piece, row, column){
-    // movimiento - compruebo si la pieza que se ha clickado es un posible movimiento
-    if(piece.possible_move == 'possible-move'){
-        // finalizar la partida
-        if(piece.value == 6){
-            playing.value = false
-            console.log('juego terminado')
-        }
+    if(player_turn == sk.player){
+        // movimiento - compruebo si la pieza que se ha clickado es un posible movimiento
+        if(piece.possible_move == 'possible-move'){
+            // finalizar la partida
+            if(piece.value == 6){
+                sk.game = false
+                console.log('juego terminado')
+            }
 
-        // comprobar si el movimiento que se va a hacer es ilegal
-        if(isIlegal(piece, row, column)){
-            return
-        }else{
+            // quitar si funciona la comprobacion de los movimientos ilegales en selectPiece
+            if(isIlegal(piece, row, column))
+                return
+
             // comprobar si se puede enroque
             if(!canCastling(piece, row, column)){
                 // comprobar si es coronacion
@@ -84,31 +86,32 @@ function elementClicked(piece, row, column){
                 resetPossibleMoves()
 
                 // paso de turno cambiando el jugador que le toca mover
-                player *= -1
+                player_turn *= -1
             }
 
             // comprobar si es jaque
-            if(isCheck()){
-                check = true
+            check = isCheck()
+
+            if(checkSituation(last_clicked.piece, row, column)){
+                if (check){
+                    console.log('jaque mate')
+                }else{
+                    console.log('tablas')
+                }
             }else{
-                check = false
+                if(check)
+                    console.log('jaque')
             }
+
+            // envio al socket la pieza que se ha movido y ha donde se ha movido
+            sk.playerMove(last_clicked, row, column)
         }
-    }
-    // selección - si la pieza que se ha pulsado es del tipo del jugador que mueve
-    else if(player == piece.type){
-        if(check)
-        // {
-            console.log('estas en jaque')
-            // if(piece.value == 6){
-            //     selectPiece(piece, row, column)
-            // }else{
-            //     // mostar toast de que esta en jaque
-            //     console.log('estas en jaque')
-            // }
-        // }else{
+        // selección - si la pieza que se ha pulsado es del tipo del jugador que mueve
+        else if(player_turn == piece.type){
+            if(check)
+                console.log('estas en jaque')
             selectPiece(piece, row, column)
-        // }
+        }
     }
 }
 
@@ -153,6 +156,8 @@ function isIlegal(piece, row, column){
 }
 
 function selectPiece(piece, row, column){
+    let can_move = false;
+
     // igualo la última pieza que se ha clickado a la pieza recien clickada
     last_clicked = {
         piece: piece,
@@ -166,8 +171,41 @@ function selectPiece(piece, row, column){
     // calculo los posibles movimientos de la nueva pieza
     let posibles_moves = ps.calculateMoves(piece, row, column)
     for(let move of posibles_moves){
-        bs.board[move.row][move.column].possible_move = 'possible-move'
+        // comprobar si el movimiento es ilegal
+        if(!isIlegal(piece, move.row, move.column)){
+            can_move = true
+            bs.board[move.row][move.column].possible_move = 'possible-move'
+        }
     }
+    
+    return can_move
+}
+
+function checkSituation(piece){
+    // TODO: no comprueba bien todas las situaciones
+    let game_over = true
+
+    bs.board.forEach((line, i) => {
+        line.forEach((celd, j) => {
+            if(celd.type * -1 == piece.type){
+                let can_move = false;
+
+                let posibles_moves = ps.calculateMoves(celd, i, j)
+                for(let move of posibles_moves){
+                    // comprobar si el movimiento es ilegal
+                    if(!isIlegal(celd, move.row, move.column)){
+                        can_move = true
+                    }
+                }
+
+                if(can_move){
+                    game_over = false
+                }
+            }
+        })
+    })
+
+    return game_over
 }
 
 function isCheck(board = bs.board, last_click = last_clicked){
@@ -297,7 +335,7 @@ function canCastling(piece, row, column){
             resetPossibleMoves()
 
             // paso de turno cambiando el jugador que le toca mover
-            player *= -1
+            player_turn *= -1
 
             return true
         }
@@ -336,7 +374,7 @@ function isCrowning(piece, row, column){
         resetPossibleMoves()
 
         // paso de turno cambiando el jugador que le toca mover
-        player *= -1
+        player_turn *= -1
 
         return true
     }else if(piece.type != last_clicked.piece.type && row == 7){
@@ -368,7 +406,7 @@ function isCrowning(piece, row, column){
         resetPossibleMoves()
 
         // paso de turno cambiando el jugador que le toca mover
-        player *= -1
+        player_turn *= -1
         return true
     }
     }
@@ -384,37 +422,54 @@ function resetPossibleMoves(){
 }
 
 function newGame(){
+    sk.searchGame()
     // reinicia la partida
     bs.board = bs.createBoard()
     last_clicked = {
         piece: {type:undefined}
     }
-    player = -1
-    playing.value = true
+    player_turn = -1
     check = false
 }
 
 </script>
 
 <template>
-    <section>
-        <h1>Turno de {{ player == 1 ? 'negras' : 'blancas' }}</h1>
-        <button @click="newGame">Jugar de nuevo</button>
-        <div v-for="line of bs.board" :key="line">
-            <article draggable="true" v-for="(piece, index) in line" @click="() => {if(playing){elementClicked(piece, bs.board.indexOf(line), index)}}"  :class="piece.color + ' ' + piece.possible_move" :key="bs.board.indexOf(line) + ' ' + index">
-                <img v-if="piece.img != ''" :src="piece.img" alt="">
-            </article>
+    <div class='container'>
+        <h1>Turno de {{ player_turn == 1 ? 'negras' : 'blancas' }}</h1>
+        <button @click='newGame'>Jugar de nuevo</button>
+        <section class='board' v-if='sk.game' :class="sk.player == 1 ? 'reverse' : ''">
+            <div class='line' v-for='line of bs.board' :key='line'>
+                <article draggable='true' v-for='(piece, index) in line' @click="() => {if(sk.game){elementClicked(piece, bs.board.indexOf(line), index)}}"  :class="piece.color + ' ' + piece.possible_move" :key="bs.board.indexOf(line) + ' ' + index">
+                    <img v-if="piece.img != ''" :src='piece.img' alt=''>
+                </article>
+            </div>
+        </section>
+        <div class='searching' v-if='sk.searching'>
+            buscando
         </div>
-    </section>
+    </div>
 </template>
 
 <style scoped>
+
+    .container{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
     section{
         width: 600px;
         height: 600px;
     }
 
-    div{
+    .reverse{
+        transform: rotate(180deg);
+    }
+
+    .line{
         width: 100%;
         height: calc(100% / 8);
         display: flex;
@@ -432,6 +487,10 @@ function newGame(){
     img{
         height: 60px;
         width: 60px;
+    }
+
+    .reverse img{
+        transform: rotate(180deg) ;
     }
 
     .white{
