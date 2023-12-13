@@ -31,7 +31,7 @@ const sk = socketStore()
                 </article>
             </div>
         </section>
-        <section v-else>
+        <section v-else class='board'>
             <div class='line' v-for='line of sk.bs.board' :key='line'>
                 <article v-for='(piece, index) in line' :class="piece.color + ' ' + piece.possible_move" :key="sk.bs.board.indexOf(line) + ' ' + index">
                     <img v-if="piece.img != ''" :src='piece.img' alt=''>
@@ -47,62 +47,72 @@ const sk = socketStore()
 <style scoped lang="scss">
     @import '@/assets/style.scss';
     .container{
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        // display
+        @include flex(column);
 
-        section{
-            width: 80vh;
-            height: 80vh;
+        .board{
+            // size
+            width: 70vh;
+            height: 70vh;
 
+            // decoration
             border: 25px solid $h-c-black;
-            border-radius: 5px;
+            border-radius: 15px;
+
+            .line{
+                // size
+                width: 100%;
+                height: calc(100% / 8);
+
+                // display
+                @include flex();
+
+                article{
+                    // size
+                    width: calc(100% / 8);
+                    height: 100%;
+
+                    // decoration
+                    @include flex();
+
+                    img{
+                        // size
+                        height: 60px;
+                        width: 60px;
+
+                        // decoration
+                        cursor: pointer;
+                    }
+                }
+
+                .white{
+                    // decoration
+                    background-color: $h-c-white;
+                }
+
+                .brown{
+                    // decoration
+                    background-color: $h-c-black;
+                }
+
+                .possible-move{
+                    // decoration
+                    filter: brightness(0.9);
+                    opacity: .9;
+                    background-image: linear-gradient(to right, rgba(200, 200, 200, .1), rgba(200, 200, 200, .1));;
+                    cursor: pointer;
+                }
+            }
         }
-    }
 
-    
+        .reverse{
+            // transform
+            transform: rotate(180deg);
 
-    .reverse{
-        transform: rotate(180deg);
-    }
-
-    .line{
-        width: 100%;
-        height: calc(100% / 8);
-        display: flex;
-    }
-
-    article{
-        width: calc(100% / 8);
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    img{
-        height: 60px;
-        width: 60px;
-        cursor: pointer;
-    }
-
-    .reverse img{
-        transform: rotate(180deg) ;
-    }
-
-    .white{
-        background-color: $h-c-white;
-    }
-
-    .brown{
-        background-color: $h-c-black;
-    }
-
-    .possible-move{
-        filter: brightness(0.9);
-        opacity: .9;
-        background-image: linear-gradient(to right, rgba(200, 200, 200, .1), rgba(200, 200, 200, .1));;
-        cursor: pointer;
+            img{
+                // transform
+                transform: rotate(180deg);
+            }
+        }
     }
 </style>
