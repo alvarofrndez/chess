@@ -44,6 +44,7 @@ export const socketStore = defineStore('socket', () => {
         })
 
         socket.on('playerMove', message => {
+            // TODO: en el enroque solo se envia el rey, tengo que enviar el rey y y la torre
             bs.board[message.row][message.column] = message.piece.piece
             bs.board[message.piece.row][message.piece.column].type = 0
             bs.board[message.piece.row][message.piece.column].value = 0
@@ -486,5 +487,9 @@ export const socketStore = defineStore('socket', () => {
         check = false
     }
 
-    return{online, game, searching, player, bs, last_clicked, player_turn, king_first_move, check, searchGame, playerMove, initSocket, elementClicked, newGame}
+    function customGame(){
+
+    }
+
+    return{online, game, searching, player, bs, last_clicked, player_turn, king_first_move, check, searchGame, playerMove, initSocket, elementClicked, newGame, customGame}
 })

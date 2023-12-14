@@ -21,5 +21,4 @@ connetToServer()
 
 <style lang='scss'>
   @import '@/assets/style.scss';
-
 </style>

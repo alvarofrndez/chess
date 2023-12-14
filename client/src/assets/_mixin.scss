@@ -1,7 +1,15 @@
-@mixin flex($direcction: row , $aling: center, $justify: center, $gap: 0){
+@mixin flex($direcction: row , $aling: center, $justify: center, $gap: 0, $wrap: nowrap){
     display: flex;
     flex-direction: $direcction;
     align-items: $aling;
     justify-content: $justify;
+    gap: $gap;
+    flex-wrap: $wrap;
+}
+
+@mixin grid($rows, $columns, $gap: 0, $rows_size: 1fr, $columns_size: 1fr){
+    display: grid;
+    grid-template-columns: repeat($columns, $columns_size);
+    grid-template-rows: repeat($rows, $rows_size);
     gap: $gap;
 }

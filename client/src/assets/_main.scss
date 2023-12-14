@@ -1,0 +1,21 @@
+body{
+    margin: 0 auto;
+
+    #app{
+        // size
+        min-width: 100vw;
+        min-height: 100vh;
+
+        // display
+        @include flex(column, center, space-between);
+
+        // decoration
+        background-color: $h-c-white;
+        
+        *{
+            color: $h-c-black;
+            font-size: $h-f-text;
+            font-family: Arial;
+        }
+    }
+}
