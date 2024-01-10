@@ -31,6 +31,22 @@ export const socketStore = defineStore('socket', () => {
         white: true,
         black: true
     }
+    let timer_white = ref({
+        time: '',
+        min: 10,
+        sec: 0,
+        mili: 0,
+        turn: false,
+        interval: undefined
+    })
+    let timer_black = ref({
+        time: '',
+        min: 10,
+        sec: 0,
+        mili: 0,
+        turn: false,
+        interval: undefined
+    })
 
 
     function initSocket(){
@@ -45,15 +61,19 @@ export const socketStore = defineStore('socket', () => {
             game.value = true
             searching.value = false
             player.value = message.player_type
+            
+            setTimer(message.player_type)
         })
 
         socket.on('playerMove', message => {
-            // TODO: en el enroque solo se envia el rey, tengo que enviar el rey y y la torre
-            bs.board[message.row][message.column] = message.piece.piece
-            bs.board[message.piece.row][message.piece.column].type = 0
-            bs.board[message.piece.row][message.piece.column].value = 0
-            bs.board[message.piece.row][message.piece.column].img = ''
+            /*
+            * cuando un oponente mueve se envia el tablero del oponente 
+            * y se iguala el de este jugador a ese cambiando el turno
+            */
+
+            bs.board = message
             player_turn.value *= -1
+            setTimer(message.player_turn)
         })
     }
 
@@ -64,6 +84,70 @@ export const socketStore = defineStore('socket', () => {
         message.data.player = socket.id
 
         sendMessage()
+    }
+
+    function setTimer(player){
+
+        if(player == -1){
+            timer_white.value.turn = true
+            timer_black.value.turn = false
+        }else{
+            timer_white.value.turn = false
+            timer_black.value.turn = true
+        }
+
+        if(timer_white.value.turn){
+            timer_white.value.interval = setInterval(() => {
+                if(timer_white.value.mili == 0 && timer_white.value.sec == 0&& timer_white.value.min == 0){
+                    // ha perdido por tiempo
+                    return
+                }
+
+                if(timer_white.value.sec == 0){
+                    timer_white.value.sec = 59
+                    timer_white.value.min--
+                }else{
+                    timer_white.value.sec--
+                }
+
+                timer_white.value.time = timer_white.value.min.toString() + ':' + timer_white.value.sec.toString() + ':' + timer_white.value.mili.toString()
+            },[1000])
+        }else{
+            timer_white.value.time = timer_white.value.min.toString() + ':' + timer_white.value.sec.toString() + ':' + timer_white.value.mili.toString()
+        }
+        if(timer_black.value.turn){
+            timer_black.value.interval = setInterval(() => {
+                if(timer_black.value.mili == 0 && timer_black.value.sec == 0&& timer_black.value.min == 0){
+                    // ha perdido por tiempo
+                    return
+                }
+
+                if(timer_black.value.sec == 0){
+                    timer_black.value.sec = 59
+                    timer_black.value.min--
+                }else{
+                    timer_black.value.sec--
+                }
+
+                timer_black.value.time = timer_black.value.min.toString() + ':' + timer_black.value.sec.toString() + ':' + timer_white.value.mili.toString()
+            },[1000])
+        }else{
+            timer_black.value.time = timer_black.value.min.toString() + ':' + timer_black.value.sec.toString() + ':' + timer_white.value.mili.toString()
+        }
+    }
+
+    function pauseTimer(){
+        if(player_turn.value == -1){
+            if(timer_white.value.turn){
+                clearInterval(timer_white.value.interval)
+                timer_white.value.turn = false
+            }
+        }else{
+            if(timer_black.value.turn){
+                clearInterval(timer_black.value.interval)
+                timer_black.value.turn = false
+            }
+        }
     }
 
     function cancelQueue(){
@@ -77,15 +161,12 @@ export const socketStore = defineStore('socket', () => {
         sendMessage()
     }
 
-    function playerMove(piece, row, column){
+    function playerMove(){
         message.event = 'playerMove'
-        message.data = {
-            piece: piece,
-            row: row,
-            column: column
-        }
+        message.data = bs.board
 
         sendMessage()
+        pauseTimer()
     }
 
     function resetMessage(){
@@ -173,8 +254,8 @@ export const socketStore = defineStore('socket', () => {
                         console.log('jaque')
                 }
     
-                // envio al socket la pieza que se ha movido y ha donde se ha movido
-                playerMove(last_clicked, row, column)
+                // notifico que se ha hecho un movimiento
+                playerMove()
             }
             // selección - si la pieza que se ha pulsado es del tipo del jugador que mueve
             else if(player_turn.value == piece.type){
@@ -506,5 +587,5 @@ export const socketStore = defineStore('socket', () => {
 
     }
 
-    return{online, game, searching, expand, player, bs, last_clicked, player_turn, king_first_move, check, searchGame, cancelQueue, playerMove, initSocket, elementClicked, newGame, customGame}
+    return{online, game, searching, expand, player, bs, last_clicked, player_turn, king_first_move, check, timer_white, timer_black, searchGame, cancelQueue, playerMove, initSocket, elementClicked, newGame, customGame}
 })
