@@ -87,6 +87,7 @@ export const socketStore = defineStore('socket', () => {
     }
 
     function setTimer(player){
+        // TODO: se inicia bien, pero cuando se mueve la primera pieza en ninguno se cambia y en las negras se ejecutan dos intervalos a la vez en el contador de las blancas
 
         if(player == -1){
             timer_white.value.turn = true
