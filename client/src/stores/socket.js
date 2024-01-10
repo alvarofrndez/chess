@@ -3,10 +3,12 @@ import { io } from 'socket.io-client'
 import { ref } from 'vue'
 import {boardStore} from '@/stores/board'
 import {pieceStore} from '@/stores/piece'
+import {toastStore} from '@/stores/toast'
 
 export const socketStore = defineStore('socket', () => {
     const bs = boardStore()
     const ps = pieceStore()
+    const toast = toastStore()
 
     let socket = undefined
     let message = {
@@ -16,6 +18,7 @@ export const socketStore = defineStore('socket', () => {
     let online = ref(0)
     let game = ref(false)
     let searching = ref(false)
+    let expand = false
     let player = ref(undefined)
 
     bs.board = bs.createBoard()
@@ -38,6 +41,7 @@ export const socketStore = defineStore('socket', () => {
         })
 
         socket.on('matchFind', (message) => {
+            toast.show('partida encontrada', 'info')
             game.value = true
             searching.value = false
             player.value = message.player_type
@@ -57,6 +61,17 @@ export const socketStore = defineStore('socket', () => {
         searching.value = true
 
         message.event = 'newMatch'
+        message.data.player = socket.id
+
+        sendMessage()
+    }
+
+    function cancelQueue(){
+        toast.show('emparejamiento cancelado', 'success')
+
+        searching.value = false
+
+        message.event = 'cancelQueue'
         message.data.player = socket.id
 
         sendMessage()
@@ -491,5 +506,5 @@ export const socketStore = defineStore('socket', () => {
 
     }
 
-    return{online, game, searching, player, bs, last_clicked, player_turn, king_first_move, check, searchGame, playerMove, initSocket, elementClicked, newGame, customGame}
+    return{online, game, searching, expand, player, bs, last_clicked, player_turn, king_first_move, check, searchGame, cancelQueue, playerMove, initSocket, elementClicked, newGame, customGame}
 })

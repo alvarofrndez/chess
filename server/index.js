@@ -54,7 +54,6 @@ io.on('connection', (socket) => {
         sendToAll(message, socket)
     })
 
-    // revisar codigo entero, añadir sistemas de colas y busqueda de partidas
     socket.on('newMatch', (message) => {
         if(queue.size > 0){
             // nueva partida
@@ -62,49 +61,14 @@ io.on('connection', (socket) => {
         }else if(queue.size == 0){
             queue.add(socket)
         }
+    })
 
-
-        // if(clients.size > 1){
-        //     adding = false
-
-        //     if(matchs.size != 0){
-        //         players_on = new Set()
-        //         for(let match of matchs){
-        //             for(let player of match){
-        //                 players_on.add(player.id)
-        //             }
-        //         }
-    
-        //         new_match = new Set()
-        //         for(let client of clients){
-        //             if(new_match.size < 2){
-        //                 is_playing = players_on.map((id) => id == client.id)
-        //                 if(!is_playing){
-        //                     adding = true
-        //                     new_match.add(client)
-        //                 }
-        //             }else{
-        //                 matchs.add(new_match)
-        //                 return
-        //             }
-        //         }
-        //     }else{
-        //         new_match = new Set()
-        //         for(let client of clients){
-        //             if(new_match.size < 2){
-        //                 new_match.add(client)
-        //             }else{
-        //                 matchs.add(new_match)
-        //                 return
-        //             }
-        //         }
-        //     }
-
-        //     if(adding)
-        //         socket.send('has sido añadido a un partido')
-        // }else{
-        //     socket.send('no hay jugadores conectados')
-        // }
+    socket.on('cancelQueue', (message) => {
+        for( let sk of queue)
+            if(sk.id == message.player){
+                queue.delete(sk)
+                return
+            }
     })
 
     socket.on('playerMove', message => {

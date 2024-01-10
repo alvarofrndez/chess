@@ -1,6 +1,8 @@
 <script setup>
 // import {ref} from 'vue'
 import {socketStore} from '@/stores/socket';
+import SearchingComponent from './SearchingComponent.vue'
+
 
 const sk = socketStore()
 
@@ -23,7 +25,7 @@ const sk = socketStore()
 </script>
 
 <template>
-    <div class='container'>
+    <div class='container' v-if='!sk.expand'>
         <section class='board' v-if='sk.game' :class="sk.player == 1 ? 'reverse' : ''">
             <div class='line' v-for='line of sk.bs.board' :key='line'>
                 <article draggable='true' v-for='(piece, index) in line' @click="() => {if(sk.game){sk.elementClicked(piece, sk.bs.board.indexOf(line), index)}}"  :class="piece.color + ' ' + piece.possible_move" :key="sk.bs.board.indexOf(line) + ' ' + index">
@@ -38,9 +40,16 @@ const sk = socketStore()
                 </article>
             </div>
         </section>
-        <div class='searching' v-if='sk.searching'>
-            buscando
-        </div>
+        <SearchingComponent v-if='sk.searching' />
+    </div>
+    <div class='container' v-else>
+        <section class='board expand'>
+            <div class='line' v-for='line of sk.bs.board' :key='line'>
+                <article v-for='(piece, index) in line' :class="piece.color + ' ' + piece.possible_move" :key="sk.bs.board.indexOf(line) + ' ' + index">
+                    <img v-if="piece.img != ''" :src='piece.img' alt=''>
+                </article>
+            </div>
+        </section>
     </div>
 </template>
 
@@ -103,6 +112,12 @@ const sk = socketStore()
                     cursor: pointer;
                 }
             }
+        }
+
+        .expand{
+            // size
+            width: 80vh;
+            height: 80vh;
         }
 
         .reverse{

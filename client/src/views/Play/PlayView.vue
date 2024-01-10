@@ -1,10 +1,12 @@
 <script setup>
 import BoardComponent from '@/components/BoardComponent.vue';
-import ArticleGameComponent from './components/ArticleGameComponent.vue';
+import ArticleGameComponent from './components/ArticleGame/ArticleGameComponent.vue';
+
 </script>
 
 <template>
     <section class='container-play'>
+
         <ArticleGameComponent type="0"></ArticleGameComponent>
         <BoardComponent class='board'></BoardComponent>
         <ArticleGameComponent type="1"></ArticleGameComponent>
