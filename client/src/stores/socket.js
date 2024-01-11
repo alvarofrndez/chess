@@ -57,12 +57,13 @@ export const socketStore = defineStore('socket', () => {
         })
 
         socket.on('matchFind', (message) => {
+            // TODO: crear variable partido con los dos usuarios, por lo que aqui recibir los dos usuarios
             toast.show('partida encontrada', 'info')
             game.value = true
             searching.value = false
             player.value = message.player_type
             
-            setTimer(message.player_type)
+            setTimer(-1)
         })
 
         socket.on('playerMove', message => {
@@ -73,7 +74,7 @@ export const socketStore = defineStore('socket', () => {
 
             bs.board = message
             player_turn.value *= -1
-            setTimer(message.player_turn)
+            setTimer(player_turn.value)
         })
     }
 
@@ -87,8 +88,6 @@ export const socketStore = defineStore('socket', () => {
     }
 
     function setTimer(player){
-        // TODO: se inicia bien, pero cuando se mueve la primera pieza en ninguno se cambia y en las negras se ejecutan dos intervalos a la vez en el contador de las blancas
-
         if(player == -1){
             timer_white.value.turn = true
             timer_black.value.turn = false
@@ -112,7 +111,7 @@ export const socketStore = defineStore('socket', () => {
                 }
 
                 timer_white.value.time = timer_white.value.min.toString() + ':' + timer_white.value.sec.toString() + ':' + timer_white.value.mili.toString()
-            },[1000])
+            },1000)
         }else{
             timer_white.value.time = timer_white.value.min.toString() + ':' + timer_white.value.sec.toString() + ':' + timer_white.value.mili.toString()
         }
@@ -130,24 +129,24 @@ export const socketStore = defineStore('socket', () => {
                     timer_black.value.sec--
                 }
 
-                timer_black.value.time = timer_black.value.min.toString() + ':' + timer_black.value.sec.toString() + ':' + timer_white.value.mili.toString()
-            },[1000])
+                timer_black.value.time = timer_black.value.min.toString() + ':' + timer_black.value.sec.toString() + ':' + timer_black.value.mili.toString()
+            },1000)
         }else{
-            timer_black.value.time = timer_black.value.min.toString() + ':' + timer_black.value.sec.toString() + ':' + timer_white.value.mili.toString()
+            timer_black.value.time = timer_black.value.min.toString() + ':' + timer_black.value.sec.toString() + ':' + timer_black.value.mili.toString()
         }
     }
 
-    function pauseTimer(){
-        if(player_turn.value == -1){
-            if(timer_white.value.turn){
-                clearInterval(timer_white.value.interval)
-                timer_white.value.turn = false
-            }
-        }else{
-            if(timer_black.value.turn){
-                clearInterval(timer_black.value.interval)
-                timer_black.value.turn = false
-            }
+    function pauseTimer() {
+        // TODO: no para los contadores, corregir tmb el cambio
+        if (timer_white.value.turn) {
+            clearInterval(timer_white.value.interval)
+            timer_white.value.interval = null
+            setTimer(1)
+        }
+        if (timer_black.value.turn) {
+            clearInterval(timer_black.value.interval)
+            timer_black.value.interval = null
+            setTimer(-1)
         }
     }
 
@@ -163,11 +162,12 @@ export const socketStore = defineStore('socket', () => {
     }
 
     function playerMove(){
+        // TODO: no funciona la coronacion 
         message.event = 'playerMove'
         message.data = bs.board
 
-        sendMessage()
         pauseTimer()
+        sendMessage()
     }
 
     function resetMessage(){

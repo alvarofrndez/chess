@@ -9,23 +9,35 @@ const props = defineProps(['type'])
 </script>
 
 <template>
-    <div class='card' v-if='props.type == -1'>
-        <p>{{sk.timer_white.time}}</p>
-        jugador data blancas
+    <section class='card' v-if='props.type == -1'>
+        <div class='data'>
+            <div class='photo'></div>
+            <div class='player-info'></div>
+            <div class='moves'>
+                <div class='timer'>
+                    <p>{{sk.timer_white.time}}</p>
+                </div>
+            </div>
+            <div class='pieces'></div>
+        </div>
+        
         <div class='options' v-if='sk.player == props.type'>
             rendirse
         </div>
-    </div>
-    <div class='card' v-else>
+    </section>
+    <section class='card' v-else>
         <p>{{sk.timer_black.time}}</p>
         jugador data negras
         <div class='options' v-if='sk.player == props.type'>
             rendirse
         </div>
-    </div>
+    </section>
 </template>
 
 <style scoped lang='scss'>
     @import '@/assets/style.scss';
 
+    .card{
+
+    }
 </style>
