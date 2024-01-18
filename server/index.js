@@ -1,9 +1,9 @@
-const { match } = require('assert');
-const express = require('express');
+const express = require('express')
 const Server = require('socket.io').Server
+const env = require('./env') 
 
-const PORT = 3000
-const HOST = '0.0.0.0';
+const PORT = env.SERVER_PORT || 3001
+const HOST = env.SERVER_HOST
 const app = express()
 
 const cors_options = {
