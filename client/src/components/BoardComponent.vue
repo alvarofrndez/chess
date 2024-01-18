@@ -26,7 +26,7 @@ const sk = socketStore()
 
 <template>
     <div class='container' v-if='!sk.expand'>
-        <section class='board' v-if='sk.game' :class="sk.player == 1 ? 'reverse' : ''">
+        <section class='board' v-if='sk.game' :class="sk.match.player_type == 1 ? 'reverse' : ''">
             <div class='line' v-for='line of sk.bs.board' :key='line'>
                 <article draggable='true' v-for='(piece, index) in line' @click="() => {if(sk.game){sk.elementClicked(piece, sk.bs.board.indexOf(line), index)}}"  :class="piece.color + ' ' + piece.possible_move" :key="sk.bs.board.indexOf(line) + ' ' + index">
                     <img v-if="piece.img != ''" :src='piece.img' alt=''>

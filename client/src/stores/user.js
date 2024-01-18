@@ -60,7 +60,8 @@ export const userStore = defineStore('user', () => {
                 },
                 winner: 0
             },
-        ]
+        ],
+        
     })
 
     return {user}

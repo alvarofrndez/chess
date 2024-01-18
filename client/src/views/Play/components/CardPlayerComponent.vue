@@ -11,7 +11,9 @@ const props = defineProps(['type'])
 <template>
     <section class='card' v-if='props.type == -1'>
         <div class='data'>
-            <div class='photo'></div>
+            <div class='photo'>
+                <img :src='sk.match.player_white.photo' :alt="'foto de perfil de ' + sk.match.player_white.username"> 
+            </div>
             <div class='player-info'></div>
             <div class='moves'>
                 <div class='timer'>
@@ -27,7 +29,7 @@ const props = defineProps(['type'])
     </section>
     <section class='card' v-else>
         <p>{{sk.timer_black.time}}</p>
-        jugador data negras
+        {{ sk.match.player_black.name }}
         <div class='options' v-if='sk.player == props.type'>
             rendirse
         </div>

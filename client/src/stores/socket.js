@@ -4,10 +4,12 @@ import { ref } from 'vue'
 import {boardStore} from '@/stores/board'
 import {pieceStore} from '@/stores/piece'
 import {toastStore} from '@/stores/toast'
+import {userStore} from '@/stores/user'
 
 export const socketStore = defineStore('socket', () => {
     const bs = boardStore()
     const ps = pieceStore()
+    const user = userStore()
     const toast = toastStore()
 
     let socket = undefined
@@ -48,6 +50,13 @@ export const socketStore = defineStore('socket', () => {
         interval: undefined
     })
 
+    let match = ref(
+        {
+            player_type: undefined,
+            player_white: undefined,
+            player_black: undefined
+        }
+    )
 
     function initSocket(){
         socket = io('ws://localhost:3000')
@@ -61,7 +70,7 @@ export const socketStore = defineStore('socket', () => {
             toast.show('partida encontrada', 'info')
             game.value = true
             searching.value = false
-            player.value = message.player_type
+            match.value = message
             
             setTimer(-1)
         })
@@ -82,7 +91,7 @@ export const socketStore = defineStore('socket', () => {
         searching.value = true
 
         message.event = 'newMatch'
-        message.data.player = socket.id
+        message.data.player = user
 
         sendMessage()
     }
@@ -188,7 +197,7 @@ export const socketStore = defineStore('socket', () => {
     // FUNCIONALIDAD DEL TABLERO
 
     function elementClicked(piece, row, column){
-        if(player_turn.value == player.value){
+        if(player_turn.value == match.value.player_type){
             // movimiento - compruebo si la pieza que se ha clickado es un posible movimiento
             if(piece.possible_move == 'possible-move'){
                 // finalizar la partida
@@ -588,5 +597,5 @@ export const socketStore = defineStore('socket', () => {
 
     }
 
-    return{online, game, searching, expand, player, bs, last_clicked, player_turn, king_first_move, check, timer_white, timer_black, searchGame, cancelQueue, playerMove, initSocket, elementClicked, newGame, customGame}
+    return{online, game, searching, expand, player, bs, last_clicked, player_turn, king_first_move, check, timer_white, timer_black, match, searchGame, cancelQueue, playerMove, initSocket, elementClicked, newGame, customGame}
 })

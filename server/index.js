@@ -55,11 +55,17 @@ io.on('connection', (socket) => {
     })
 
     socket.on('newMatch', (message) => {
+        // uno el socket entero con el usuario
+        let data = {
+            socket: socket,
+            user: message.player.user
+        }
+
         if(queue.size > 0){
             // nueva partida
-            newMatch(Array.from(queue)[0], socket)
+            newMatch(Array.from(queue)[0], data)
         }else if(queue.size == 0){
-            queue.add(socket)
+            queue.add(data)
         }
     })
 
@@ -74,12 +80,12 @@ io.on('connection', (socket) => {
     socket.on('playerMove', message => {
         for(let match of matchs){
             for(let player of match){
-                if(player.id == socket.id){
+                if(player.socket.id == socket.id){
                     if(match.indexOf(player) == 0){
-                        playerMove(message, match[1])
+                        playerMove(message, match[1].socket)
                         return
                     }else{
-                        playerMove(message, match[0])
+                        playerMove(message, match[0].socket)
                         return
                     }
                 }
@@ -94,23 +100,25 @@ io.on('connection', (socket) => {
 })
 
 function newMatch(player1, player2){
-    if(player1.id != player2.id){
+    if(player1.socket.id != player2.socket.id){
         matchs.add([player1, player2])
-        queue.delete(player1)
+        queue.delete(Array.from(queue)[0])
 
         let match = {
-            player_type : -1
+            player_type : -1,
+            player_white : player1.user,
+            player_black : player2.user
         } 
     
         message.event = 'matchFind'
         message.data = match
-        sendMessage(player1)
+        sendMessage(player1.socket)
 
         match.player_type = 1
     
         message.event = 'matchFind'
         message.data = match
-        sendMessage(player2)
+        sendMessage(player2.socket)
     }
 }
 
