@@ -1,169 +1,51 @@
+// global
+require('dotenv').config()
 const express = require('express')
-const Server = require('socket.io').Server
-const env = require('./env') 
-
-const PORT = env.SERVER_PORT || 3001
-const HOST = env.SERVER_HOST
 const app = express()
 
+
+// socket
+const Server = require('socket.io').Server
+const PORT = process.env.SERVER_PORT || 3001
+const HOST = process.env.SERVER_HOST
+const server = require('http').createServer(app)
+const socketRoutes = require('./src/routes/socket/index')
+
+// creacion del servidor
+server.listen(PORT, HOST, () => console.log(`Socket esuchando en: ${PORT}`))
+
 const cors_options = {
-    origin: 'http://localhost:5173',
+    origin: process.env.URL_CLIENT,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     optionsSuccessStatus: 204,
 };
 
-const codi = 'utf-8'
-
-const server = require('http').createServer(app)
-server.listen(PORT, HOST, () => console.log(`escuchando en el puerto: ${PORT}`))
-
 const io = new Server(server, {
     cors: cors_options, 
 })
 
-const clients = new Set()
-const matchs = new Set()
-const queue = new Set()
-let message = {
-    event: undefined,
-    data: {}
-} 
-
+// events
 io.on('connection', (socket) => {
-
-    newClientConnected(socket)
-    console.log(clients.size)
-
-    socket.on('disconnect', () => {
-        clients.delete(socket)
-
-        sendPlayerActivity(socket)
-        console.log(clients.size)
-    })
-
-    socket.on('close', () => {
-        clients.delete(socket)
-
-        sendPlayerActivity(socket)
-        console.log(clients.size)
-    })
-
-    socket.on('message', (data) => {
-        message = decodeString(data) + " enviado por " + socket.id
-        sendToAll(message, socket)
-    })
-
-    socket.on('newMatch', (message) => {
-        // uno el socket entero con el usuario
-        let data = {
-            socket: socket,
-            user: message.player.user
-        }
-
-        if(queue.size > 0){
-            // nueva partida
-            newMatch(Array.from(queue)[0], data)
-        }else if(queue.size == 0){
-            queue.add(data)
-        }
-    })
-
-    socket.on('cancelQueue', (message) => {
-        for( let sk of queue)
-            if(sk.id == message.player){
-                queue.delete(sk)
-                return
-            }
-    })
-
-    socket.on('playerMove', message => {
-        for(let match of matchs){
-            for(let player of match){
-                if(player.socket.id == socket.id){
-                    if(match.indexOf(player) == 0){
-                        playerMove(message, match[1].socket)
-                        return
-                    }else{
-                        playerMove(message, match[0].socket)
-                        return
-                    }
-                }
-            }
-        }
-    })
-
-    message.event = 'playerActivity'
-    message.data = clients.size
-
-    sendToAll(socket)
+    socketRoutes(socket);
 })
 
-function newMatch(player1, player2){
-    if(player1.socket.id != player2.socket.id){
-        matchs.add([player1, player2])
-        queue.delete(Array.from(queue)[0])
 
-        let match = {
-            player_type : -1,
-            player_white : player1.user,
-            player_black : player2.user
-        } 
-    
-        message.event = 'matchFind'
-        message.data = match
-        sendMessage(player1.socket)
+// api
+const cors = require('cors')
+const handleDisconnect = require('./src/config/handle').handleDisconnect
+const DB_PORT = require('./src/config/database').port
 
-        match.player_type = 1
-    
-        message.event = 'matchFind'
-        message.data = match
-        sendMessage(player2.socket)
-    }
-}
+app.use(cors())
+app.use(express.json())
 
-function playerMove(data, player){
-    message.event = 'playerMove'
-    message.data = data
-    sendMessage(player)
-}
+handleDisconnect();
+app.listen(DB_PORT, () => {
+  console.log(`Api escuchando en ${DB_PORT}`)
+})
 
-function decodeString(string){
-    // decodifica un string que viene como un buffer desde el cliente
-    return string.toString(codi)
-}
+// endspoints
+const route_ep = require('./src/config/connection').route
+const user_ep = require('./src/routes/api/user')
 
-function sendToAll(socket){
-    clients.forEach((client) => {
-        if (/*client !== socket &&*/ client.connected) {
-            client.emit(message.event, message.data)
-        }
-    });
-
-    resetMessage()
-}
-
-function sendPlayerActivity(socket){
-    message.event = 'playerActivity'
-    message.data = clients.size
-
-    sendToAll(socket)
-}
-
-function sendMessage(client){
-    console.log(client.id, message)
-    client.emit(message.event, message.data)
-
-    resetMessage()
-}
-
-function resetMessage(){
-    message = {
-        event: undefined,
-        data: {}
-    } 
-}
-
-function newClientConnected(socket){
-    clients.add(socket)
-}
+app.use(route_ep + 'user', user_ep)
