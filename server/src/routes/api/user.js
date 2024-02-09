@@ -18,4 +18,8 @@ router.post('/login', (req, res) => {
     user.login(req, res)
 })
 
+router.post('/getUserByToken', (req, res) => {
+    user.getUserByToken(req, res)
+})
+
 module.exports = router

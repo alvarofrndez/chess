@@ -12,15 +12,15 @@ export const userStore = defineStore('user', () => {
 
     // variables
     const user = ref({
-        id: 0,
-        username: 'alvarito',
-        name: 'alvaro',
+        id: undefined,
+        username: undefined,
+        name: undefined,
         token: undefined,
-        rating: 0,
-        password: 'contraseña',
-        email: 'alvaro@gmail.com',
+        rating: undefined,
+        password: undefined,
+        email: undefined,
         photo: '/src/assets/images/profile-photo.png',
-        banner: 'afsdfasd',
+        banner: undefined,
         last_games: [
             {
                 id: 1,
@@ -103,14 +103,15 @@ export const userStore = defineStore('user', () => {
          * return: devuelve true si el usuario tiene token y false si no tiene o da un error
          */
         const result_query = await getLocalKey();
-        console.log(result_query)
+
         if (result_query) {
             const token = localStorage.getItem(result_query);
-        if (token) {
-            user.value.token = token;
-            return true
-        }
-        return false
+
+            if (token) {
+                getUserByToken(token)
+                return true
+            }
+            return false
         }
 
         return null
@@ -149,12 +150,12 @@ export const userStore = defineStore('user', () => {
         }
     }
 
-    async function singIn(name, email, password) {
+    async function singIn(username, email, password) {
         // TODO: pregunatr mantener inicio de sesion y crear y almacenar token
         /**
          * Registra un usuario en la base de datos
          * 
-         * naem (string): nombre 
+         * username (string): nombre de usuario 
          * email (string): correo
          * password (string): contraseña 
          */
@@ -164,15 +165,16 @@ export const userStore = defineStore('user', () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                name: name,
+                username: username,
                 email: email,
                 password: password,
             }),
         }).catch(() => {
             toast_s.show('Ha ocurrido un error', 'error')
+            return false
         })
 
-        manageLoginResponse(response)
+        return manageLoginResponse(response)
     }
 
     async function login(email, password){
@@ -193,22 +195,10 @@ export const userStore = defineStore('user', () => {
             }),
         }).catch(() => {
             toast_s.show('Ha ocurrido un error', 'error')
+            return false
         })
 
-        manageLoginResponse(response)
-    }
-
-    function setLoginUser(data){
-        /**
-         * Iguala la variable user a los valores pasados
-         * 
-         * data: son los valores devueltos de la base de datos
-         */
-        user.value.id = data.id
-        user.value.email = data.email
-        user.value.name = data.name
-        console.log(user.value)
-        // user.value.token = data.token
+        return manageLoginResponse(response)
     }
 
     async function manageLoginResponse(response){
@@ -226,12 +216,66 @@ export const userStore = defineStore('user', () => {
             if(data.status){
                 setLoginUser(data.data)
             
-                toast_s.show('Bienvenido ' + user.value.name, 'success')
+                toast_s.show('Bienvenido ' + user.value.username, 'success')
+                return true
             }else
                 toast_s.show(data.message, 'error')
 
         }else 
             toast_s.show('Ha ocurrido un error', 'error')
+
+        return false
+    }
+
+    function setLoginUser(data){
+        /**
+         * Iguala la variable user a los valores pasados
+         * 
+         * data: son los valores devueltos de la base de datos
+         */
+        user.value.id = data.id
+        user.value.email = data.email
+        user.value.username = data.username
+        user.value.token = data.token
+
+        setLocalToken()
+        console.log(user.value)
+    }
+
+    async function setLocalToken(){
+        /**
+         * Inserta el token del usuario en el localStorage
+         */
+
+        const result_query = await getLocalKey();
+
+        if(result_query){
+            localStorage.setItem(result_query, user.value.token)
+        }
+    }
+
+    async function getUserByToken(token){
+        /**
+         * Loguea a un usuario
+         * 
+         * email (string): correo
+         * password (string): contraseña 
+         */
+        const response = await fetch(api_route + 'getUserByToken', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                token: token,
+            }),
+        }).catch(() => {
+            toast_s.show('Ha ocurrido un error', 'error')
+            return false
+        })
+
+        console.log(response)
+        return manageLoginResponse(response)
     }
 
     return { user, isLoggued, singIn, login}

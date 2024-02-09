@@ -10,13 +10,13 @@ const user = user_store.user
 <template>
     <article class='user'>
         <section class='container-image'>
-            <img :src='user.photo' :alt='user.name'>
+            <img :src='user.photo' :alt='user.username'>
         </section>
         <section class='container-data'>
             <div>
                 <div>
-                    <label class='up'>{{ user.name }}</label>
-                    <label class='down'>nombre</label>
+                    <label class='up'>{{ user.username }}</label>
+                    <label class='down'>nickname</label>
                 </div>
             </div>
             <div>
