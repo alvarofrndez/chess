@@ -63,8 +63,8 @@ module.exports = {
          * return: promesa del token o false
          */
     
-        return new Promise((res, rej) => {
-            let token = hash.hashPassword(hashed_password + salt)
+        return new Promise(async (res, rej) => {
+            let token = await hash.hashPassword(hashed_password + salt)
 
             db.query(`update user set token = '${token.hashed_password}' where email = '${email}'`, (err, result) => {
                 if(err){
@@ -72,6 +72,7 @@ module.exports = {
                 }
 
                 if(result && result.affectedRows > 0){
+                    console.log(token)
                     res(token.hashed_password)
                 }else{
                     res(false)

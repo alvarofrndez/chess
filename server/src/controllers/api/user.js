@@ -27,7 +27,6 @@ module.exports = {
     },
 
     async singIn(req, res){
-        // TODO: insertar el token en caso de que decida mantener la sesion iniciada
         /**
          * Registra un usuario en la base de datos y devuelve sus valores,
          * incluyendo el id
@@ -53,7 +52,7 @@ module.exports = {
                 } 
 
                 if (result && result.affectedRows > 0) {
-                    let token = await user_utilities.insertToken(email)
+                    let token = await user_utilities.insertToken(email, hashed_password, salt)
 
                     if(token){
                         return res.json({
@@ -94,11 +93,11 @@ module.exports = {
         const user = await user_utilities.getuserByEmail(email)
 
         const { hashed_password, salt } = await hash.hashPassword(password)
-        let token = await hash.hashPassword(salt + hashed_password)
 
         if(user){
             if(await hash.comparePasswords(user.salt + hashed_password, user.salt + user.password)){
-                let token = await user_utilities.insertToken(email)
+                let token = await user_utilities.insertToken(email, hashed_password, salt)
+                
                 if(token){
                     user.token = token
 
@@ -127,6 +126,35 @@ module.exports = {
         }
     },
 
+    async deleteTokenUser(req, res){
+        /**
+         * Borra el token de un usuario
+         */
+
+        const { email } = req.body
+
+        db.query(`update user set token = '' where email = '${email}'`, async (err, result) => {
+            if (err){
+                return res.json({
+                    status: false,
+                    message: 'Ha ocurrido un error'
+                })
+            } 
+
+            if (result && result.affectedRows > 0) {
+                return res.json({
+                    status: true,
+                    message: 'Deslogueo correcto',
+                })
+            }else{
+                return res.json({
+                    status: false,
+                    message: 'No se ha podido registrar'
+                })
+            }
+        })
+    },
+
     async getUserByToken(req, res){
         /**
          * Obtiene el usuario a través de su token
@@ -147,7 +175,7 @@ module.exports = {
                 return res.json({
                     status: true,
                     message: 'Inicio correcto',
-                    data: res(result[0])
+                    data: result[0]
                 })
             }else{
                 return res.json({

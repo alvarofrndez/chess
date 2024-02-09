@@ -201,6 +201,26 @@ export const userStore = defineStore('user', () => {
         return manageLoginResponse(response)
     }
 
+    async function logout(){
+        /**
+         * Desloguea a un usuario, borrando su token
+         */
+        const response = await fetch(api_route + 'deleteTokenUser', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: user.value.email
+            }),
+        }).catch(() => {
+            toast_s.show('Ha ocurrido un error', 'error')
+            return false
+        })
+
+        return manageLogoutResponse(response)
+    }
+
     async function manageLoginResponse(response){
         /**
          * Maneja los datos recibidos del servidor una vez que se logua o registra
@@ -217,6 +237,35 @@ export const userStore = defineStore('user', () => {
                 setLoginUser(data.data)
             
                 toast_s.show('Bienvenido ' + user.value.username, 'success')
+                return true
+            }else
+                toast_s.show(data.message, 'error')
+
+        }else 
+            toast_s.show('Ha ocurrido un error', 'error')
+
+        return false
+    }
+
+    async function manageLogoutResponse(response){
+        /**
+         * Maneja los datos recibidos del servidor una vez que se desloguea
+         * 
+         * response: respuesta del servidor
+         */
+        if(response){
+            if(!response.ok)
+                toast_s.show('Ha ocurrido un error', 'error')
+
+            const data = await response.json()
+
+            if(data.status){
+            
+                toast_s.show('Hasta pronto ' + user.value.username, 'success')
+                
+                setVoidUser()
+                deleteLocalToken()
+
                 return true
             }else
                 toast_s.show(data.message, 'error')
@@ -254,6 +303,18 @@ export const userStore = defineStore('user', () => {
         }
     }
 
+    async function deleteLocalToken(){
+        /**
+         * Borra el token del usuario en el localStorage
+         */
+
+        const result_query = await getLocalKey();
+
+        if(result_query){
+            localStorage.removeItem(result_query)
+        }
+    }
+
     async function getUserByToken(token){
         /**
          * Loguea a un usuario
@@ -274,9 +335,93 @@ export const userStore = defineStore('user', () => {
             return false
         })
 
-        console.log(response)
         return manageLoginResponse(response)
     }
 
-    return { user, isLoggued, singIn, login}
+    function setVoidUser(){
+        user.value = {
+            id: undefined,
+            username: undefined,
+            name: undefined,
+            token: undefined,
+            rating: undefined,
+            password: undefined,
+            email: undefined,
+            photo: '/src/assets/images/profile-photo.png',
+            banner: undefined,
+            last_games: [
+                {
+                    id: 1,
+                    player1: {
+                        type: -1,
+                        name: 'pepe'
+                    },
+                    player2: {
+                        type: 1,
+                        name: 'jose'
+                    },
+                    winner: 1
+                },
+                {
+                    id: 2,
+                    player1: {
+                        type: 1,
+                        name: 'pepe'
+                    },
+                    player2: {
+                        type: -1,
+                        name: 'jose'
+                    },
+                    winner: -1
+                },
+                {
+                    id: 3,
+                    player1: {
+                        type: -1,
+                        name: 'pepe'
+                    },
+                    player2: {
+                        type: 1,
+                        name: 'jose'
+                    },
+                    winner: 1
+                },
+                {
+                    id: 4,
+                    player1: {
+                        type: -1,
+                        name: 'pepe'
+                    },
+                    player2: {
+                        type: 1,
+                        name: 'jose'
+                    },
+                    winner: 0
+                },
+            ],
+            ping: {
+                total: undefined,
+                function: () => {
+                    setInterval(() => {
+                        const startTime = new Date().getTime();
+
+                        fetch('localhost:')
+                        .then(response => response.json())
+                        .then(data => {
+                            const endTime = new Date().getTime();
+                            const totalPing = endTime - startTime;
+                            const serverPing = data.ping;
+                            const clientPing = totalPing - serverPing;
+                            console.log('Total Ping:', totalPing, 'milisegundos');
+                            console.log('Server Ping:', serverPing, 'milisegundos');
+                            console.log('Client Ping:', clientPing, 'milisegundos');
+                        })
+                        .catch(error => console.error('Error de ping:', error));
+                    }, 1000)
+                } 
+            }
+        }
+    }
+
+    return { user, isLoggued, singIn, login, logout}
 })

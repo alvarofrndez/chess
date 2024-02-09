@@ -25,6 +25,8 @@
       router.push('/login')
     else if(result === null)
       toast_s.show('No se ha podido inicar sesión', 'error')
+    else
+      router.push('/')
   }
 
   function connetToServer(){
