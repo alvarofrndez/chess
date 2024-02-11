@@ -1,12 +1,10 @@
 <script setup>
     import { RouterLink } from 'vue-router';
     import router from '@/router'
-    import { socketStore } from '@/stores/socket.js'
     import { userStore } from '@/stores/user';
 
     // stores
     const user_s = userStore()  
-    const sk_s = socketStore()
 
     async function logout(){
         let result = await user_s.logout()
@@ -25,9 +23,7 @@
                     <RouterLink to='/'>Home</RouterLink>
                     <RouterLink to='/play'>Play</RouterLink>
                 </nav>
-                <div class='online'>
-                    <label>online {{ sk_s.online }}</label>
-                </div>
+                
                 <div class='logout'>
                     <img :onclick='logout' src='/src/assets/images/logout.svg' alt='logout'>
                 </div>
