@@ -1,5 +1,5 @@
 <script setup>
-    import { ref } from 'vue'
+    import { ref, onUnmounted } from 'vue'
     import router from '@/router'
     import { userStore } from '@/stores/user';
     import BackgroundComponent from '@/components/BackgroundComponent.vue';
@@ -10,18 +10,36 @@
     let email = ref('')
     let password = ref('')
 
+    // function
     async function login(){
         let result = await user_s.login(email.value, password.value)
     
         if(result)
             router.push('/')
-            
     }
+
+    function handleKeyDown(e){
+        /**
+         * Ejecuta el login en caso de que se pulse enter
+         */
+        if(e.key == 'Enter'){
+            login()
+        }
+    }
+
+    onUnmounted(() => {
+        /**
+         * Elimina el evento cuando se desmonta el componente
+         */
+        document.removeEventListener('keydown', handleKeyDown);
+    })
+
+    document.addEventListener('keydown', handleKeyDown);
 </script> 
 
 <template>
     
-    <BackgroundComponent />
+    <BackgroundComponent/>
     
     <section class='login-container'>
         <div class='image-container'>

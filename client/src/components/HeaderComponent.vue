@@ -18,17 +18,19 @@
 
 <template>
     <header>
-        <!-- <img alt='Vue logo' class='logo' src='@/assets/logo.svg' width='125' height='125' /> -->
-        <div class='wrapper'>
-            <nav>
-                <RouterLink to='/'>Home</RouterLink>
-                <RouterLink to='/play'>Play</RouterLink>
-            </nav>
-            <div class='online'>
-                <label>online {{ sk_s.online }}</label>
-            </div>
-            <div class='logout'>
-                <img :onclick='logout' src='/src/assets/images/logout.svg' alt='logout'>
+        <div class='wrapper-container'>
+            <div class='wrapper'>
+                <img alt='logo chess' class='logo' src='@/assets/logo.svg'/>
+                <nav>
+                    <RouterLink to='/'>Home</RouterLink>
+                    <RouterLink to='/play'>Play</RouterLink>
+                </nav>
+                <div class='online'>
+                    <label>online {{ sk_s.online }}</label>
+                </div>
+                <div class='logout'>
+                    <img :onclick='logout' src='/src/assets/images/logout.svg' alt='logout'>
+                </div>
             </div>
         </div>
     </header>
@@ -40,7 +42,7 @@
     header{
         // size
         width: 100%;
-        height: 12.5vh;
+        height: 100px;
 
         // display
         @include flex();
@@ -49,30 +51,54 @@
         position: fixed;
         top: 0;
 
-        .wrapper{
-            border: 1px solid black;
+        .wrapper-container{
             // size
             width: 60%;
             height: 80%;
 
             // display
-            @include flex(row, center, space-between);
+            @include flex();
 
-            .logout{
+            // decoration
+            border-radius: 100px;
+            box-shadow: 0px 10px 30px 6px $h-c-gray-transparent;
+
+            .wrapper{
                 // size
-                width: 30px;
-                height: 30px;
+                width: calc(100% - 15px);
+                height: calc(100% - 15px);
 
-                img{
+                // display
+                @include flex(row, center, space-between);
+
+                // decoration
+                border-radius: 95px;
+
+                .logo{
+                    border: 1px solid black;
+                    width: 70px;
+                    height: 70px;
+
+                    border-radius: 50px;
+                }
+
+                .logout{
                     // size
-                    width: 100%;
-                    height: 100%;
+                    width: 30px;
+                    height: 30px;
 
-                    // decoration
-                    cursor: pointer;
+                    img{
+                        // size
+                        width: 100%;
+                        height: 100%;
+
+                        // decoration
+                        cursor: pointer;
+                    }
                 }
             }
         }
+        
     }
 
 </style>

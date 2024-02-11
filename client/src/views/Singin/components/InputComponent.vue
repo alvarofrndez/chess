@@ -21,7 +21,7 @@
     <div :class="'inputs-container-' + type">
         <div class='data-container'>
             <label :for='username'>{{toCapitalLetter(type)}}</label>
-            <input :type="type == 'password' ? type : 'text'" :name='type' :id='type' :value='value' @input="(event) =>updateValue(event.target.value)">
+            <input :type="type == 'username' ? 'text' : type" :name='type' :id='type' :value='value' @input="(event) =>updateValue(event.target.value)" required>
         </div>
         <div :onclick='() => error.error = false' v-if='error.error' class='error-container'>
             <img src='src/assets/images/error.svg'/>
