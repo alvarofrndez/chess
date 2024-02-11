@@ -3,6 +3,7 @@
     import router from '@/router'
     import { userStore } from '@/stores/user'
     import BackgroundComponent from '@/components/BackgroundComponent.vue'
+    import InputComponent from './components/InputComponent.vue'
 
     // stores
     const user_s = userStore()
@@ -80,36 +81,9 @@
             <img src='/src/assets/images/rey-blanco.png' alt='imagen de peon blanco'>
         </div>
         <div class='inputs-container'>
-            <div class='inputs-container-username'>
-                <div class='data-container'>
-                    <label for='username'>Usuario</label>
-                    <input type='text' name='username' id='username' v-model='username'>
-                </div>
-                <div :onclick='() => username_error.error = false' v-if='username_error.error' class='error-container'>
-                    <img src='src/assets/images/error.svg'/>
-                    <span class='error'>{{ username_error.message }}</span>
-                </div>
-            </div>
-            <div class='inputs-container-email'>
-                <div class='data-container'>
-                    <label for='email'>Correo</label>
-                    <input type='text' name='email' id='email' v-model='email'>
-                </div>
-                <div :onclick='() => email_error.error = false' v-if='email_error.error' class='error-container'>
-                    <img src='src/assets/images/error.svg'/>
-                    <span class='error'>{{ email_error.message }}</span>
-                </div>
-            </div>
-            <div class='inputs-container-password'>
-                <div class='data-container'>
-                    <label for='password'>Contraseña</label>
-                    <input type='password' name='password' id='password' v-model='password'>
-                </div>
-                <div :onclick='() => password_error.error = false' v-if='password_error.error' class='error-container'>
-                    <img src='src/assets/images/error.svg'/>
-                    <span class='error'>{{ password_error.message }}</span>
-                </div>
-            </div>
+            <InputComponent v-model:value="username" type='username' :error="username_error"/>
+            <InputComponent v-model:value="email" type='email' :error="email_error"/>
+            <InputComponent v-model:value="password" type='password' :error="password_error"/>
         </div>
         <div class='button-container'>
             <button :onclick='login'>Registrar</button>
