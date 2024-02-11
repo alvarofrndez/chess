@@ -72,7 +72,6 @@ module.exports = {
                 }
 
                 if(result && result.affectedRows > 0){
-                    console.log(token)
                     res(token.hashed_password)
                 }else{
                     res(false)
