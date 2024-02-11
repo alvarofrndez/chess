@@ -86,8 +86,7 @@ const sk = socketStore()
 
                     img{
                         // size
-                        height: 60px;
-                        width: 60px;
+                        max-height: 95%;
 
                         // decoration
                         cursor: pointer;

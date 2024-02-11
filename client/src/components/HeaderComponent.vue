@@ -45,6 +45,10 @@
         // display
         @include flex();
 
+        // position
+        position: fixed;
+        top: 0;
+
         .wrapper{
             border: 1px solid black;
             // size

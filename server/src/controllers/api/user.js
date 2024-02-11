@@ -19,7 +19,7 @@ module.exports = {
             }
 
             if(result.length > 0){
-                return res.json({status: true, key: result[0].key})
+                return res.json({status: true, key: result[0].key_value})
             }else{
                 return res.json({status: false});
             }

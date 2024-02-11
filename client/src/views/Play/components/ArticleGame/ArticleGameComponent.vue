@@ -1,6 +1,5 @@
 <script setup>
 import CardPlayerComponent from '../CardPlayerComponent.vue'
-import ReflexComponent from '@/components/ReflexComponent.vue'
 import PersonalCardComponenet from '@/components/PersonalCardComponenet.vue'
 import { socketStore } from '@/stores/socket'
 
@@ -19,11 +18,9 @@ const props = defineProps(['type'])
         <div v-if='!sk.game' class='new-game'>
             <button @click='sk.newGame' v-if='!sk.game'>
                 Buscar partida
-                <ReflexComponent/>
             </button>
             <button @click='sk.customGame' v-if='!sk.game'>
                 Personalizada
-                <ReflexComponent/>
             </button>
         </div>
         <CardPlayerComponent type='-1' v-else/>

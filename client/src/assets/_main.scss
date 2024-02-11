@@ -7,11 +7,11 @@ body{
         min-height: 100vh;
 
         // display
-        @include flex(column, center, space-between);
+        @include flex(column);
 
         // decoration
         background-color: $h-c-white;
-        
+
         *{
             color: $h-c-black;
             font-size: $h-f-text;
