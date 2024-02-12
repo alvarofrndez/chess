@@ -89,7 +89,7 @@
         grid-column: 1 / 7;
 
         // decoration
-        background-color: transparent;
+        // background-color: transparent;
       }
 
       .ranking-container{

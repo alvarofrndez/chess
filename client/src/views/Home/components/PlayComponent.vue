@@ -34,6 +34,7 @@
         background-position: center;
         background-size: fill;
         background-repeat: no-repeat;
+        background-color: transparent !important;
 
         .container{
             // size
@@ -49,6 +50,10 @@
                 
                 // display
                 @include simpleGrid(center, flex-end);
+
+                .go-to{
+                    background-color: $h-c-white;
+                }
             }
         }
     }
