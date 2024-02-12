@@ -1,31 +1,27 @@
 <script setup>
-    import { RouterLink } from 'vue-router';
+    import { RouterLink } from 'vue-router'
     import router from '@/router'
-    import { userStore } from '@/stores/user';
-
-    // stores
-    const user_s = userStore()  
-
-    async function logout(){
-        let result = await user_s.logout()
-
-        if(result)
-            router.push('/login')
-    }
+    import MenuHeaderComponent from './MenuHeaderComponent.vue';
 </script>
 
 <template>
     <header>
         <div class='wrapper-container'>
             <div class='wrapper'>
-                <img alt='logo chess' class='logo' src='@/assets/logo.svg'/>
-                <nav>
-                    <RouterLink to='/'>Home</RouterLink>
-                    <RouterLink to='/play'>Play</RouterLink>
-                </nav>
-                
-                <div class='logout'>
-                    <img :onclick='logout' src='/src/assets/images/logout.svg' alt='logout'>
+                <img :onclick="() => router.push('/')" class='logo' src='@/assets/images/logo-chess.png' alt='logo chess'/>
+                <div class='header-right'>
+                    <nav>
+                        <li>
+                            <RouterLink to='/play'>Jugar</RouterLink>
+                        </li>
+                        <li>
+                            <RouterLink to='/tournament'>Torneos</RouterLink>
+                        </li>
+                        <li>
+                            <RouterLink to='/ranking'>Clasificación</RouterLink>
+                        </li>
+                    </nav>
+                    <MenuHeaderComponent/>
                 </div>
             </div>
         </div>
@@ -38,7 +34,7 @@
     header{
         // size
         width: 100%;
-        height: 100px;
+        height: $h-h-header;
 
         // display
         @include flex();
@@ -49,7 +45,7 @@
 
         .wrapper-container{
             // size
-            width: 60%;
+            width: 80%;
             height: 80%;
 
             // display
@@ -57,7 +53,9 @@
 
             // decoration
             border-radius: 100px;
-            box-shadow: 0px 10px 30px 6px $h-c-gray-transparent;
+            // box-shadow: 0px 10px 30px 6px $h-c-gray-transparent;
+            // background-color: $h-c-white;
+            background-color: $h-c-white-light;
 
             .wrapper{
                 // size
@@ -71,25 +69,96 @@
                 border-radius: 95px;
 
                 .logo{
-                    border: 1px solid black;
-                    width: 70px;
-                    height: 70px;
+                    // size
+                    width: 50px;
+                    height: 50px;
 
+                    // position
+                    margin-left: -2px;
+
+                    // decoration
                     border-radius: 50px;
+                    cursor: pointer;
                 }
 
-                .logout{
+                .header-right{
                     // size
-                    width: 30px;
-                    height: 30px;
+                    width: calc(100% / 3 + 100% / 20);
+                    height: 100%;
 
-                    img{
-                        // size
-                        width: 100%;
-                        height: 100%;
+                    // display
+                    @include flex(row, center, space-between);
 
-                        // decoration
-                        cursor: pointer;
+                    nav{
+                        width: 70%;
+
+                        @include flex(row, center, space-between);
+
+                        li{
+                            // size
+                            height: 35px;
+
+                            // display
+                            @include flex(column);
+
+                            // position
+                            position: relative;
+
+                            // decoration
+                            cursor: pointer;
+
+                            a{
+                                // size
+                                height: 50%;
+
+                                // decoration
+                                text-decoration: none;
+                            }
+
+                            &::after{
+                                align-self: flex-start;
+                                position: absolute;
+                                content: '';
+                                width: 0%;
+                                height: 2px;
+                                bottom: 0;
+                                right: 0;
+                                background-color: $h-c-black;
+                                visibility: hidden;
+                                transition: all 0.2s;
+                            }
+
+                            &:hover{
+                                &::after{
+                                    left: 0;
+                                    width: 100%;
+                                    visibility: visible;
+                                    transition: all 0.2s;
+                                }
+                            }
+                        }
+
+                        @media screen and (max-width: 900px) {
+                            li{
+                                a{
+                                    font-size: $h-s-text-small;
+                                }
+                            }
+                        }
+
+                        @media screen and (max-width: 700px) {
+                            gap: 2rem;
+
+                            li{
+                                a{
+                                    font-size: $h-s-text-small;
+                                }
+                            }
+                        }
+
+                        @media screen and (max-width: 600px) {
+                            display: none;
+                        }
                     }
                 }
             }
