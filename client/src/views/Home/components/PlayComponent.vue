@@ -2,6 +2,8 @@
     import { socketStore } from '@/stores/socket.js'
     import goToComponent from './goToComponent.vue';
 
+    const data = '<h1>hola</h1>'
+
     // stores
     const sk_s = socketStore()
 </script>
@@ -14,7 +16,7 @@
                 <h1>jugadores</h1>
             </div>
             <div class='subtitle'>
-                <goToComponent path='/play' name='jugar'/>
+                <goToComponent path='/play' name='jugar' :data="data"/>
                 <h3>gan asdfasd fas fasd</h3>
             </div>
         </div>
