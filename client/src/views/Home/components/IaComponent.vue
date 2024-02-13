@@ -25,6 +25,7 @@
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
+
         .container{
             width: calc(100% - 2.5rem);
             height: calc(100% - 2.5rem);
@@ -43,6 +44,7 @@
 
                 // display
                 @include flex(column, flex-start, flex-end);
+
                 .go-to{
                     background-color: $h-c-white-light;
                 }

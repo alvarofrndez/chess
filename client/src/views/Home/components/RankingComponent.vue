@@ -40,6 +40,10 @@
 
             // decoration
             border-radius: 25px;
+            overflow: hidden;
+
+            // animation
+            animation: appear 1s forwards;
 
             .container{
                 width: calc(100% - 5rem);
@@ -72,7 +76,13 @@
 
             // display
             @include flex();
-            
+
+            // decoration
+            background-image: url('/src/assets/images/podium-chess.jpg');
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+
             .container{
                 // display
                 @include flex(column, flex-start, flex-end);
@@ -81,12 +91,12 @@
                     background-color: $h-c-white-light;
                 }
             }
+        }
 
-            // decoration
-            background-image: url('/src/assets/images/podium-chess.jpg');
-            background-position: center;
-            background-size: cover;
-            background-repeat: no-repeat;
+        @keyframes appear {
+            from{
+                height: 0%;
+            }
         }
     }
 </style>

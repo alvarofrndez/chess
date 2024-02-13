@@ -45,6 +45,16 @@
             @include flex(column, flex-start, space-between);
 
             .title{
+
+                // animation
+                animation: appear 1s forwards;
+
+                @keyframes appear {
+                    from{
+                        transform: translateY(100%);
+                    }
+                }
+
                 h1{
                     span{
                         // margin
@@ -69,6 +79,14 @@
                 // decoration
                 overflow: hidden;
 
+                // animation
+                animation: appear-sub 1s forwards;
+
+                @keyframes appear-sub {
+                    from{
+                        transform: translateY(-100%);
+                    }
+                }
                 .go-to{
                     background-color: $h-c-white;
                 }
