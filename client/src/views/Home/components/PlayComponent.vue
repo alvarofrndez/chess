@@ -35,6 +35,7 @@
         background-size: fill;
         background-repeat: no-repeat;
         background-color: transparent !important;
+        overflow: hidden;
 
         .container{
             // size
@@ -51,7 +52,7 @@
 
                 @keyframes appear {
                     from{
-                        transform: translateY(100%);
+                        transform: translateX(-100%);
                     }
                 }
 
@@ -84,7 +85,7 @@
 
                 @keyframes appear-sub {
                     from{
-                        transform: translateY(-100%);
+                        transform: translateX(100%);
                     }
                 }
                 .go-to{

@@ -40,7 +40,7 @@
 <template>
   <HeaderComponent v-if='!header_s.in_auth'/>
   <RouterView />
-  <FooterComponent v-if='!header_s.in_auth'/>
+  <!-- <FooterComponent v-if='!header_s.in_auth'/> -->
   <LoaderComponent v-if='loader_s.loading'/>
   <ToastComponent v-if='toast_s.showing'/>
 </template>

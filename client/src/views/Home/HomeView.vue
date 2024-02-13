@@ -3,7 +3,6 @@
   import RankingComponent from './components/RankingComponent.vue'
   import TournamentComponent from './components/TournamentComponent.vue'
   import IaComponent from './components/IaComponent.vue'
-  import OtherComponent from './components/OtherComponent.vue'
   import PersonalComponent from './components/PersonalComponent.vue'
 
 </script>
@@ -26,10 +25,6 @@
 
       <article class='ia-container'>
         <IaComponent/>
-      </article>
-
-      <article class='other-container'>
-        <OtherComponent/>
       </article>
 
       <article class='personal-container'>
@@ -64,7 +59,7 @@
       // display
       @include gridHome();
 
-      .play-container, .ranking-container, .tournament-container, .ia-container, .other-container, .personal-container{
+      .play-container, .ranking-container, .tournament-container, .ia-container, .personal-container{
         // display
         @include flex();
 
@@ -109,17 +104,13 @@
         grid-row: 4 / 5;
         grid-column: 1 / 5;
       }
-
-      .other-container{
-        // display
-        grid-row: 4 / 5;
-        grid-column: 5 / 9;
-      }
-
       .personal-container{
         // display
         grid-row: 4 / 5;
         grid-column: 9 / 13;
+
+        // decoration
+        background-color: transparent;
       }
     }
   }
