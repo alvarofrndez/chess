@@ -1,7 +1,7 @@
 <script setup>
     import { defineProps } from 'vue'
 
-    const { path, name, data } = defineProps(['path', 'name', 'data'])
+    const { path, name } = defineProps(['path', 'name'])
 </script>
 
 <template>
@@ -19,15 +19,16 @@
         // size
         width: 50px;
         height: 50px;
+
+        // position
         position: absolute;
+        z-index: 10;
 
         // display
         @include flex();
 
         // decoration
-        background-color: $h-c-white-light;
         border-radius: 50%;
-        transform: translateY(-50%);
         transition: all .3s ease-in-out;
         cursor: pointer;
 
@@ -45,25 +46,34 @@
         }
 
         &:hover{
-            // size
-            width: 200px;
-            height: 200px;
-
-            // decoration
-            border-radius: 15px;
-            transform: translateY(-90%);
-            transition: all .3s ease-in-out;
-            cursor: inherit;
-
             a{
-                position: absolute;
-                left: 0;
-                bottom: 0;
                 img{
                     transform: translateY(-30%) translateX(30%);
                     transition: all .3s ease-in-out;
                 }
             }
         }
+
+        // &:hover{
+        //     // size
+        //     width: 200px;
+        //     height: 200px;
+
+        //     // decoration
+        //     border-radius: 15px;
+        //     transform: translateY(-80%);
+        //     transition: all .3s ease-in-out;
+        //     cursor: inherit;
+
+        //     a{
+        //         position: absolute;
+        //         left: 0;
+        //         bottom: 0;
+        //         img{
+        //             transform: translateY(-30%) translateX(30%);
+        //             transition: all .3s ease-in-out;
+        //         }
+        //     }
+        // }
     }
 </style>

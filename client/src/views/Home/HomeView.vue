@@ -70,7 +70,7 @@
 
         // decoration
         background-color: $h-c-white-light;
-        border-radius: 15px;
+        border-radius: 30px;
 
         .wrapper{
           // size
@@ -79,7 +79,7 @@
 
           // decoration
           background-color: $h-c-white;
-          border-radius: 10px;
+          border-radius: 25px;
         }
       }
 

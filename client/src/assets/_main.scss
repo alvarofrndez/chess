@@ -25,6 +25,23 @@ body{
             padding: 0;
         }
 
+        h1{
+            // decoration
+            font-size: $h-f-text-title;
+        }
+
+        h2{
+            // decoration
+            font-size: $h-f-text-subtitle;
+        }
+
+
+        h3{
+            // decoration
+            font-size: $h-f-text-big;
+        }
+
+
         a{
             // decoration
             text-decoration: none;

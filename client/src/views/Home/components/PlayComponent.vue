@@ -2,25 +2,23 @@
     import { socketStore } from '@/stores/socket.js'
     import goToComponent from './goToComponent.vue';
 
-    const data = '<h1>hola</h1>'
-
     // stores
     const sk_s = socketStore()
 </script>
 
 <template>
-    <div class='wrapper'>
+    <section class='wrapper'>
         <div class='container'>
-            <div class='title'>
-                <h1>Juega contra {{ sk_s.online - 1}}</h1>
+            <article class='title'>
+                <h1>Juega contra <span>{{ sk_s.online - 1}}</span></h1>
                 <h1>jugadores</h1>
-            </div>
-            <div class='subtitle'>
-                <goToComponent path='/play' name='jugar' :data="data"/>
-                <h3>gan asdfasd fas fasd</h3>
-            </div>
+            </article>
+            <article class='subtitle'>
+                <goToComponent path='/play' name='jugar'/>
+                <h3>o gana a tus amigos en partidas personalizadas</h3>
+            </article>
         </div>
-    </div>
+    </section>
 </template>
 
 <style lang='scss' scoped>
@@ -46,15 +44,39 @@
             // display
             @include flex(column, flex-start, space-between);
 
+            .title{
+                h1{
+                    span{
+                        // margin
+                        padding: .3rem;
+
+                        // decoration
+                        font-size: $h-f-text-title !important;
+                        color: $h-c-white-light !important;
+                        background-color: $h-c-black;
+                        border-radius: 15px;
+                    }
+                }
+            }
+
             .subtitle{
                 // size
                 width: 100%;
                 
                 // display
-                @include simpleGrid(center, flex-end);
+                @include simpleGrid(flex-end, flex-end);
+
+                // decoration
+                overflow: hidden;
 
                 .go-to{
                     background-color: $h-c-white;
+                }
+
+                h3{
+                    text-align: end;
+                    width: 60%;
+                    transform: translateX(60%);
                 }
             }
         }
