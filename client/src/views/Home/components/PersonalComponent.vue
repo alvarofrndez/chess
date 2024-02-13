@@ -19,6 +19,7 @@
 
     let index = ref(0)
     let interval = undefined
+    let is_hovering = ref(false)
 
 
     function startCarrusel(){
@@ -75,11 +76,27 @@
             index.value += 1
     }
 
+    function handleMouseEnter(){
+        is_hovering.value = true
+        setTimeout(() => {
+            let element = document.getElementById('information')
+            element.style.display = 'block'
+        },1)
+    }
+
+    function handleMouseLeave(){
+        is_hovering.value = false
+        setTimeout(() => {
+            let element = document.getElementById('information')
+            element.style.display = 'none'
+        },1)
+    }
+
     startCarrusel()
 </script>
 
 <template>
-    <div class='container'>
+    <div class='container' :onmouseenter="handleMouseEnter" :onmouseleave="handleMouseLeave">
         <a href='https://alvarofrndez.dev' target='_blank' class='wrapper'>
             <img :src="'/src/assets/images/' + webs_images[index].img" :alt='webs_images[index].value'>
         </a>
@@ -91,6 +108,15 @@
                 <span v-if="index == i" class='fill'></span>
             </div>
         </div>
+        <aside v-if="is_hovering" id='information'>
+            <span>
+                Esta sección está dedicada a mis proyectos, 
+                pulsa en ella para verlos o miralós en 
+                <a href='https://alvarofrndez.dev'>alvarofrndez.dev</a> 
+                o en mi github 
+                <a href='https://github.com/alvarofrndez'>github.com/alvarofrndez</a>
+            </span>
+        </aside>
     </div>
 </template>
 
@@ -215,6 +241,39 @@
                 }
             }
         }
+
+        #information{
+            // size
+            width: fit-content;
+            height: 100%;
+
+            // position
+            position: absolute;
+            left: 50%;
+            z-index: 20;
+
+            // display
+            @include flex();
+
+            // decoration
+            background-color: $h-c-white-light;
+            border-radius: 25px;
+            transform: translateX(-50%) translateY(-110%);
+
+            animation: appear 1s forwards;
+
+            @keyframes appear {
+                from{
+                    
+                }to{
+                }
+            }
+
+            span{
+                a{
+                    color: blue !important;
+                }
+            }
+        }
     }
-    
 </style>
