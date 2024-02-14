@@ -8,16 +8,14 @@
     const sk_s = socketStore()
 
     // variables
-    // TODO: no se como cojones acceder a los datos de la variable player
-    const player = defineProps(['player'])
-    console.log(player)
+    const { player } = defineProps(['player'])
 </script>
 
 <template>
-    <article v-if='user_s.user.id == player.id'>
+    <article v-if='user_s.user.id == player.id' class='wrapper'>
         <div class='data'>
             <div class='photo'>
-                <img :src='player.photo' :alt="'foto de perfil de ' + sk.match.player_white.username"> 
+                <img :src='player.photo' :alt="'foto de perfil de ' + player.username"> 
             </div>
             <div class='player-info'>
                 {{ player.username }}
