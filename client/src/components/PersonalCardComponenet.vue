@@ -27,14 +27,14 @@ const user = user_store.user
             </div>
             <div>
                 <div>
-                    <label class='up'>{{ user.rating }}</label>
-                    <label class='down'>rating</label>
+                    <label class='up'>{{ user.ranking }}</label>
+                    <label class='down'>ranking</label>
                 </div>
             </div>
             <div>
                 <div>
-                    <label class='up'>{{ user.rating }}</label>
-                    <label class='down'>rating</label>
+                    <label class='up'>{{ user.ranking }}</label>
+                    <label class='down'>ranking</label>
                 </div>
             </div>
         </section>

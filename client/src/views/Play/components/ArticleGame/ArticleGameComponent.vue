@@ -1,5 +1,5 @@
 <script setup>
-import CardPlayerComponent from '../CardPlayerComponent.vue'
+import CardPlayerComponent from './components/CardPlayer/CardPlayerComponent.vue'
 import PersonalCardComponenet from '@/components/PersonalCardComponenet.vue'
 import { socketStore } from '@/stores/socket'
 

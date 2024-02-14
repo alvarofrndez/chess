@@ -282,11 +282,12 @@ export const userStore = defineStore('user', () => {
          * 
          * data: son los valores devueltos de la base de datos
          */
-        user.value.id = data.id
-        user.value.email = data.email
-        user.value.username = data.username
-        user.value.token = data.token
+        user.value = data
 
+        if(user.value.photo == null){
+            user.value.photo ='/src/assets/images/profile-photo.png'
+        }
+        
         setLocalToken()
         console.log(user.value)
     }
