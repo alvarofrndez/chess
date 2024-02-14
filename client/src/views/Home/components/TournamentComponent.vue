@@ -44,7 +44,7 @@
                 padding: .5rem !important;
 
                 // decoration
-                background-color: $h-c-white-light;
+                background-color: rgba($color: $h-c-white, $alpha: .9);
                 writing-mode: vertical-rl;
                 text-align: center;
                 border-radius: 15px;
@@ -62,7 +62,7 @@
                 @include flex(column, flex-start, flex-end);
 
                 .go-to{
-                    background-color: $h-c-white-light;
+                    background-color: $h-c-white;
                 }
             }
         }

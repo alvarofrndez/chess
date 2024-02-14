@@ -119,8 +119,9 @@
             top: calc($h-m-header - ($h-m-header - $h-h-header));
 
             // decoration
-            background-color: $h-c-white-light;
+            background-color: $h-c-white;
             border-radius: 20px;
+            border: 3px solid $h-c-gray;
 
             @media screen and (max-width: 600px) {
                 // size

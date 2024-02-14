@@ -46,7 +46,7 @@
                 @include flex(column, flex-start, flex-end);
 
                 .go-to{
-                    background-color: $h-c-white-light;
+                    background-color: $h-c-white;
                 }
             }
         }

@@ -53,9 +53,8 @@
 
             // decoration
             border-radius: 100px;
-            // box-shadow: 0px 10px 30px 6px $h-c-gray-transparent;
-            // background-color: $h-c-white;
-            background-color: $h-c-white-light;
+            box-shadow: 0px 0px 40px 0px $h-c-gray;
+            background-color: $h-c-white;
 
             .wrapper{
                 // size

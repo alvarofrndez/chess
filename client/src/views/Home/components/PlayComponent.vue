@@ -57,14 +57,15 @@
                 }
 
                 h1{
+                    color: $h-c-white !important;
                     span{
                         // margin
                         padding: .3rem;
 
                         // decoration
                         font-size: $h-f-text-title !important;
-                        color: $h-c-white-light !important;
-                        background-color: $h-c-black;
+                        color: $h-c-black !important;
+                        background-color: $h-c-white;
                         border-radius: 15px;
                     }
                 }
@@ -93,6 +94,7 @@
                 }
 
                 h3{
+                    color: $h-c-white !important;
                     text-align: end;
                     width: 60%;
                     transform: translateX(60%);

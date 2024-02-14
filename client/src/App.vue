@@ -2,7 +2,6 @@
   import { RouterView } from 'vue-router'
   import router from '@/router'
   import HeaderComponent from '@/components/HeaderComponent.vue';
-  import FooterComponent from '@/components/FooterComponent.vue';
   import LoaderComponent from '@/components/LoaderComponent.vue';
   import ToastComponent from '@/components/ToastComponent.vue';
   import { socketStore } from '@/stores/socket.js'
@@ -38,7 +37,7 @@
 </script>
 
 <template>
-  <HeaderComponent v-if='!header_s.in_auth'/>
+  <HeaderComponent v-if='!header_s.in_auth && !sk_s.expand'/>
   <RouterView />
   <!-- <FooterComponent v-if='!header_s.in_auth'/> -->
   <LoaderComponent v-if='loader_s.loading'/>

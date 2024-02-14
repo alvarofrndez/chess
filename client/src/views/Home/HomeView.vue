@@ -64,7 +64,7 @@
         @include flex();
 
         // decoration
-        background-color: $h-c-white-light;
+        background-color: $h-c-gray;
         border-radius: 30px;
 
         .wrapper{
@@ -84,7 +84,7 @@
         grid-column: 1 / 7;
 
         // decoration
-        // background-color: transparent;
+        background-color: $h-c-black;
       }
 
       .ranking-container{

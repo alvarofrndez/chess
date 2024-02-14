@@ -78,18 +78,10 @@
 
     function handleMouseEnter(){
         is_hovering.value = true
-        setTimeout(() => {
-            let element = document.getElementById('information')
-            element.style.display = 'block'
-        },1)
     }
 
     function handleMouseLeave(){
         is_hovering.value = false
-        setTimeout(() => {
-            let element = document.getElementById('information')
-            element.style.display = 'none'
-        },1)
     }
 
     startCarrusel()
@@ -108,13 +100,13 @@
                 <span v-if="index == i" class='fill'></span>
             </div>
         </div>
-        <aside v-if="is_hovering" id='information'>
+        <aside v-if="is_hovering" id='information' :onmouseenter="handleMouseEnter">
             <span>
                 Esta sección está dedicada a mis proyectos, 
                 pulsa en ella para verlos o miralós en 
-                <a href='https://alvarofrndez.dev'>alvarofrndez.dev</a> 
+                <a href='https://alvarofrndez.dev' target='_blank'>alvarofrndez.dev</a> 
                 o en mi github 
-                <a href='https://github.com/alvarofrndez'>github.com/alvarofrndez</a>
+                <a href='https://github.com/alvarofrndez' target='_blank'>github.com/alvarofrndez</a>
             </span>
         </aside>
     </div>
@@ -139,6 +131,9 @@
         @keyframes appear {
             from{
                 transform: scale(0);
+            }to{
+                transform: scale(1);
+                z-index: 20;
             }
         }
 
@@ -225,7 +220,7 @@
 
                     // decoration
                     border-radius: 5px;
-                    background-color: $h-c-white-light;
+                    background-color: $h-c-white;
                 }
 
                 .fill{
@@ -244,34 +239,27 @@
 
         #information{
             // size
-            width: fit-content;
             height: 100%;
 
             // position
             position: absolute;
             left: 50%;
-            z-index: 20;
 
             // display
             @include flex();
 
+            // margin
+            padding: 1rem;
+
             // decoration
-            background-color: $h-c-white-light;
-            border-radius: 25px;
-            transform: translateX(-50%) translateY(-110%);
-
-            animation: appear 1s forwards;
-
-            @keyframes appear {
-                from{
-                    
-                }to{
-                }
-            }
+            background-color: $h-c-black;
+            border-radius: 25px 25px 0 0;
+            transform: translateX(-50%) translateY(-90.5%);
 
             span{
+                color: $h-c-gray !important;
                 a{
-                    color: blue !important;
+                    color: $h-c-white-light !important;
                 }
             }
         }
