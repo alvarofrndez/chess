@@ -33,9 +33,14 @@ function newMatch(socket, message) {
     }
 }
 
-function cancelQueue(message) {
+function cancelQueue(message) { 
+    /**
+     * Borra el usuario del set queue, por lo que lo saca de la cola
+     * 
+     * message (JSON):  player -> contiene el id del socket del usuario
+     */
     for( let sk of queue){
-        if(sk.id == message.player){
+        if(sk.socket.id == message.player){
             queue.delete(sk)
             return
         }
