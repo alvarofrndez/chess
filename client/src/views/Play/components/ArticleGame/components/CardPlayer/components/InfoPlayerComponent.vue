@@ -18,6 +18,8 @@
     setInterval( () => {
         getPing()
     }, 2000)
+
+    console.log(player)
 </script>
 
 <template>
@@ -34,6 +36,7 @@
                 <div class='timer'>
                     <p>{{sk_s.timer_white.time}}</p>
                 </div>
+                <span v-for='move of player.movements' :key='move.piece + move.row + move.column'>{{ move.piece.value }}</span>
             </div>
             <div class='pieces'></div>
         </div>

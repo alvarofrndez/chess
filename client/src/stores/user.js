@@ -71,7 +71,6 @@ export const userStore = defineStore('user', () => {
                 winner: 0
             },
         ],
-        movements: []
     })
     const api_route = global_s.API_URL + 'user/'
 
@@ -267,6 +266,7 @@ export const userStore = defineStore('user', () => {
         if(user.value.photo == null){
             user.value.photo ='/src/assets/images/profile-photo.png'
         }
+        user.value.movements = [] 
         
         setLocalToken()
         console.log(user.value)
