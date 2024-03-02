@@ -49,3 +49,4 @@ const route_ep = require('./src/config/connection').route
 const user_ep = require('./src/routes/api/user')
 
 app.use(route_ep + 'user', user_ep)
+app.use(route_ep + 'user', user_ep)

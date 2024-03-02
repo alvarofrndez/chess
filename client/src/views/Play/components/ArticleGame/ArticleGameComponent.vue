@@ -8,13 +8,12 @@ const sk = socketStore()
 
 // props
 const props = defineProps(['type'])
-
 </script>
 
 <template>
     <img v-if='sk.game && !sk.expand' @click='sk.expand = true' src='src/assets/images/expand.svg' class='expand'/>
     <img v-if='sk.game && sk.expand' @click='sk.expand = false' src='src/assets/images/minimize.svg' class='expand'/>
-    <article v-if='props.type == 0 && !sk.expand' class='section-data player1'>
+    <article v-if='props.type == -1 && !sk.expand' class='section-data player1'>
         <div v-if='!sk.game' class='new-game'>
             <button @click='sk.newGame' v-if='!sk.game'>
                 Buscar partida
@@ -23,11 +22,11 @@ const props = defineProps(['type'])
                 Personalizada
             </button>
         </div>
-        <CardPlayerComponent type='-1' v-else/>
+        <CardPlayerComponent :type='props.type' v-else/>
     </article>
     <article v-if='props.type == 1 && !sk.expand' class='section-data player2'>
         <PersonalCardComponenet  v-if='!sk.game' class='player'/>
-        <CardPlayerComponent type='1' v-else class='card'/>
+        <CardPlayerComponent :type='props.type' v-else class='card'/>
     </article>
 </template>
 
@@ -64,31 +63,14 @@ const props = defineProps(['type'])
             @include grid(4, 2, .5rem);
 
             button{
-                // size
-                width: 100%;
-                height: 100%;
-
-                // position
-                position: relative;
-
-                // display
-                @include flex(row, flex-end, flex-start);
-                grid-row: 4 / 5;
-                grid-column: 1 / 2;
+                @include mainButton();
 
                 // margin
                 padding: 15px;
 
-                // decoration
-                border: none;
-                border-radius: 15px;
-                cursor: pointer;
-                background-color: $h-c-black;
-                color: $h-c-white !important;
-                scale: 1;
-
-                // transition
-                transition: all .1s ease;
+                // display
+                grid-row: 4 / 5;
+                grid-column: 1 / 2;
 
                 &:nth-child(2){
                     // display
@@ -97,10 +79,6 @@ const props = defineProps(['type'])
                     // decoration
                     background-color: $h-c-gray;
                     color: $h-c-black !important;
-                }
-
-                &:hover{
-                    scale: 1.05;
                 }
             }
         }

@@ -66,7 +66,6 @@ export const socketStore = defineStore('socket', () => {
         })
 
         socket.on('matchFind', (message) => {
-            // TODO: crear variable partido con los dos usuarios, por lo que aqui recibir los dos usuarios
             toast.show('partida encontrada', 'info')
             game.value = true
             searching.value = false
@@ -170,7 +169,7 @@ export const socketStore = defineStore('socket', () => {
         sendMessage()
     }
 
-    function playerMove(){
+    function playerMove(move){
         // TODO: no funciona la coronacion 
         message.event = 'playerMove'
         message.data = bs.board
@@ -192,6 +191,20 @@ export const socketStore = defineStore('socket', () => {
         resetMessage()
     }
 
+    function newGame(){
+        searchGame()
+        // reinicia la partida
+        bs.board = bs.createBoard()
+        last_clicked = {
+            piece: {type:undefined}
+        }
+        player_turn.value = -1
+        check = false
+    }
+
+    function customGame(){
+
+    }
 
 
     // FUNCIONALIDAD DEL TABLERO
@@ -265,7 +278,11 @@ export const socketStore = defineStore('socket', () => {
                 }
     
                 // notifico que se ha hecho un movimiento
-                playerMove()
+                playerMove({
+                    piece: piece,
+                    row: row,
+                    column: column
+                })
             }
             // selección - si la pieza que se ha pulsado es del tipo del jugador que mueve
             else if(player_turn.value == piece.type){
@@ -580,21 +597,6 @@ export const socketStore = defineStore('socket', () => {
                 piece.possible_move = ''
             }
         }
-    }
-    
-    function newGame(){
-        searchGame()
-        // reinicia la partida
-        bs.board = bs.createBoard()
-        last_clicked = {
-            piece: {type:undefined}
-        }
-        player_turn.value = -1
-        check = false
-    }
-
-    function customGame(){
-
     }
 
     return{online, game, searching, expand, player, bs, last_clicked, player_turn, king_first_move, check, timer_white, timer_black, match, searchGame, cancelQueue, playerMove, initSocket, elementClicked, newGame, customGame}

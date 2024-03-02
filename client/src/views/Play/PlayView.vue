@@ -6,8 +6,7 @@ import ArticleGameComponent from './components/ArticleGame/ArticleGameComponent.
 
 <template>
     <section class='container-play'>
-
-        <ArticleGameComponent type="0"></ArticleGameComponent>
+        <ArticleGameComponent type="-1"></ArticleGameComponent>
         <BoardComponent class='board'></BoardComponent>
         <ArticleGameComponent type="1"></ArticleGameComponent>
     </section>

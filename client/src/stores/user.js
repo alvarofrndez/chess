@@ -71,27 +71,7 @@ export const userStore = defineStore('user', () => {
                 winner: 0
             },
         ],
-        ping: {
-            total: undefined,
-            function: () => {
-                setInterval(() => {
-                    const startTime = new Date().getTime();
-
-                    fetch('localhost:')
-                    .then(response => response.json())
-                    .then(data => {
-                        const endTime = new Date().getTime();
-                        const totalPing = endTime - startTime;
-                        const serverPing = data.ping;
-                        const clientPing = totalPing - serverPing;
-                        console.log('Total Ping:', totalPing, 'milisegundos');
-                        console.log('Server Ping:', serverPing, 'milisegundos');
-                        console.log('Client Ping:', clientPing, 'milisegundos');
-                    })
-                    .catch(error => console.error('Error de ping:', error));
-                }, 1000)
-            } 
-        }
+        movements: []
     })
     const api_route = global_s.API_URL + 'user/'
 
@@ -424,5 +404,36 @@ export const userStore = defineStore('user', () => {
         }
     }
 
-    return { user, isLoggued, singIn, login, logout}
+    async function getPing(){
+        /**
+         * Obtiene el ping del cliente enviando una petición al servidor y calculando
+         * la diferencia de tiempo con la respuesta
+         */
+        const startTime = new Date().getTime();
+
+        const response = await fetch(api_route + 'getPing', {
+            method: 'GET',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+        }).catch(() => {
+            return 999
+        })
+
+        if(response){
+            if (!response.ok)
+                return 999
+
+            const data = await response.json()
+
+            if(data.status)
+                return new Date().getTime() - startTime
+            else
+                return 999
+        }
+
+        return 999
+    } 
+
+    return { user, isLoggued, singIn, login, logout, getPing}
 })

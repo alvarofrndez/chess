@@ -26,4 +26,8 @@ router.post('/getUserByToken', (req, res) => {
     user.getUserByToken(req, res)
 })
 
+router.get('/getPing', (req, res) => {
+    return res.json({status: true})
+})
+
 module.exports = router

@@ -187,3 +187,30 @@
     column-gap: 16px;
     row-gap: 16px;
 }
+
+@mixin mainButton(){
+    // size
+    width: 100%;
+    height: 100%;
+
+    // position
+    position: relative;
+
+    // display
+    @include flex(row, flex-end, flex-start);
+
+    // decoration
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    background-color: $h-c-black;
+    color: $h-c-white !important;
+    scale: 1;
+
+    // transition
+    transition: all .1s ease;
+
+    &:hover{
+        scale: 1.05;
+    }
+}
