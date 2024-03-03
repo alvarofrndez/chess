@@ -30,4 +30,8 @@ router.get('/getPing', (req, res) => {
     return res.json({status: true})
 })
 
+router.post('/newRanking', (req, res) => {
+    user.newRanking(req, res)
+})
+
 module.exports = router

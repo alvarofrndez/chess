@@ -184,5 +184,34 @@ module.exports = {
                 })
             }
         })
+    },
+
+    async newRanking(req, res){
+        /**
+         * Modifica el ranking del usuario con los nuevo puntos
+         */
+
+        const {points, user_id} = req.body
+
+        db.query(`update user set ranking = '${points}' where id = '${user_id}'`, (err, result) => {
+            if (err){
+                return res.json({
+                    status: false,
+                    message: 'Ha ocurrido un error'
+                })
+            }
+
+            if(result.affectedRows > 0){
+                return res.json({
+                    status: true,
+                    message: 'Ranking modificado',
+                })
+            }else{
+                return res.json({
+                    status: false,
+                    message: 'Ha ocurrido un error'
+                })
+            }
+        })
     }
 }

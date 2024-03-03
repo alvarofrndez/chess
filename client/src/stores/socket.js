@@ -93,11 +93,7 @@ export const socketStore = defineStore('socket', () => {
 
             game.value = false
 
-            if(message.loser == -1){
-                console.log('han ganado las negras')
-            }else{
-                console.log('han ganado las blancas')
-            }
+            pointsDistribution(message)
 
             resetGame()
         })
@@ -162,7 +158,6 @@ export const socketStore = defineStore('socket', () => {
     }
 
     function pauseTimer() {
-        // TODO: no para los contadores, corregir tmb el cambio
         if (timer_white.value.turn) {
             clearInterval(timer_white.value.interval)
             timer_white.value.interval = null
@@ -186,7 +181,6 @@ export const socketStore = defineStore('socket', () => {
     }
 
     function playerMove(){
-        // TODO: no funciona la coronacion 
         message.event = 'playerMove'
         message.data = bs.board
 
@@ -229,6 +223,24 @@ export const socketStore = defineStore('socket', () => {
         sendMessage()
     }
 
+    async function pointsDistribution(message){
+        /**
+         * Comprueba quien ha ganado y quien ha perdido, muestra un toast y
+         * envia a la base de datos los puntos para su nuevo ranking
+         */
+        if(message.loser == match.value.player_type){
+            if(await user.newRanking(-10)){
+                toast.show('has perdido, -10', 'info')
+            }
+        }else if(message.loser * -1 == match.value.player_type){
+            if(await user.newRanking(10)){
+                toast.show('has ganado, +10', 'info')
+            }
+        }else{
+            toast.show('tablas', 'info')
+        }
+    }
+
     function resetGame(){
         match.value = {
             player_type: undefined,
@@ -244,6 +256,8 @@ export const socketStore = defineStore('socket', () => {
             white: true,
             black: true
         }
+        
+        clearInterval(timer_white.value.interval)
         timer_white.value = {
             time: '',
             min: 10,
@@ -252,6 +266,8 @@ export const socketStore = defineStore('socket', () => {
             turn: false,
             interval: undefined
         }
+        
+        clearInterval(timer_black.value.interval)
         timer_black.value = {
             time: '',
             min: 10,
@@ -306,41 +322,39 @@ export const socketStore = defineStore('socket', () => {
                 // comprobar si se puede enroque
                 if(!canCastling(piece, row, column)){
                     // comprobar si es coronacion
-                    if(isCrowning(piece, row, column)){
-                        return
-                    }
-    
-                    // la casilla de la ultima pieza que se clicko que es la que quiero mover la igualo a una casilla vacía
-                    bs.board[last_clicked.row][last_clicked.column] = {
-                        type: 0,
-                        value: 0,
-                        color: last_clicked.piece.color,
-                        possible_move: '',
-                        img: ''
-                    }
-    
-                    // si a donde quiero mover la pieza tiene un color de fondo distinto al de la pieza que quiero mover
-                    if(piece.color != last_clicked.piece.color){
-                        last_clicked.piece.color = piece.color
-                    }
-    
-                    // muevo la pieza que quiero mover a la nueva posición
-                    bs.board[row][column] = last_clicked.piece
-    
-                    // comprobrar si es el rey la que se ha movido
-                    if(last_clicked.piece.value == 6){
-                        if(last_clicked.piece.type == -1){
-                            king_first_move.white = false
-                        }else if(last_clicked.piece.type == 1){
-                            king_first_move.dark = false
+                    if(!isCrowning(piece, row, column)){
+                        // la casilla de la ultima pieza que se clicko que es la que quiero mover la igualo a una casilla vacía
+                        bs.board[last_clicked.row][last_clicked.column] = {
+                            type: 0,
+                            value: 0,
+                            color: last_clicked.piece.color,
+                            possible_move: '',
+                            img: ''
                         }
+        
+                        // si a donde quiero mover la pieza tiene un color de fondo distinto al de la pieza que quiero mover
+                        if(piece.color != last_clicked.piece.color){
+                            last_clicked.piece.color = piece.color
+                        }
+        
+                        // muevo la pieza que quiero mover a la nueva posición
+                        bs.board[row][column] = last_clicked.piece
+        
+                        // comprobrar si es el rey la que se ha movido
+                        if(last_clicked.piece.value == 6){
+                            if(last_clicked.piece.type == -1){
+                                king_first_move.white = false
+                            }else if(last_clicked.piece.type == 1){
+                                king_first_move.dark = false
+                            }
+                        }
+        
+                        // reseteo los posibles moviminetos
+                        resetPossibleMoves()
+        
+                        // paso de turno cambiando el jugador que le toca mover
+                        player_turn.value *= -1
                     }
-    
-                    // reseteo los posibles moviminetos
-                    resetPossibleMoves()
-    
-                    // paso de turno cambiando el jugador que le toca mover
-                    player_turn.value *= -1
                 }
     
                 // comprobar si es jaque
@@ -606,71 +620,47 @@ export const socketStore = defineStore('socket', () => {
     }
     
     function isCrowning(piece, row, column){
-        // TODO: refactorizar el codigo en una funcion y meterla en store de piece
-        if(last_clicked.value == 1){
-            if(piece.type != last_clicked.piece.type && row == 0){
-            // la casilla de la ultima pieza que se clicko que es la que quiero mover la igualo a una casilla vacía
-            bs.board[last_clicked.row][last_clicked.column] = {
-                type: 0,
-                value: 0,
-                color: last_clicked.piece.color,
-                possible_move: '',
-                img: ''
+        if(last_clicked.piece.value == 1){
+            let image = undefined
+            
+            if(row == 0){
+                image = 'src/assets/images/reina-blanca.png'
+            }else if(row == 7){
+                image = 'src/assets/images/reina-negra.png'
             }
-    
-            // si a donde quiero mover la pieza tiene un color de fondo distinto al de la pieza que quiero mover
-            if(piece.color != last_clicked.piece.color){
-                last_clicked.piece.color = piece.color
+
+            if(piece.type != last_clicked.piece.type && row == 0 || row == 7){
+                // la casilla de la ultima pieza que se clicko que es la que quiero mover la igualo a una casilla vacía
+                bs.board[last_clicked.row][last_clicked.column] = {
+                    type: 0,
+                    value: 0,
+                    color: last_clicked.piece.color,
+                    possible_move: '',
+                    img: ''
+                }
+        
+                // si a donde quiero mover la pieza tiene un color de fondo distinto al de la pieza que quiero mover
+                if(piece.color != last_clicked.piece.color){
+                    last_clicked.piece.color = piece.color
+                }
+        
+                // muevo la pieza que quiero mover a la nueva posición y la convierto en dama
+                bs.board[row][column] = {
+                    type: last_clicked.piece.type,
+                    value: 5,
+                    color: last_clicked.piece.color,
+                    possible_move: '',
+                    img: image
+                }
+        
+                // reseteo los posibles moviminetos
+                resetPossibleMoves()
+        
+                // paso de turno cambiando el jugador que le toca mover
+                player_turn.value *= -1
+        
+                return true
             }
-    
-            // muevo la pieza que quiero mover a la nueva posición y la convierto en dama
-            bs.board[row][column] = {
-                type: last_clicked.piece.type,
-                value: 5,
-                color: last_clicked.piece.color,
-                possible_move: '',
-                img: 'src/assets/images/reina-blanca.png'
-            }
-    
-            // reseteo los posibles moviminetos
-            resetPossibleMoves()
-    
-            // paso de turno cambiando el jugador que le toca mover
-            player_turn.value *= -1
-    
-            return true
-        }else if(piece.type != last_clicked.piece.type && row == 7){
-            console.log(last_clicked.piece)
-            // la casilla de la ultima pieza que se clicko que es la que quiero mover la igualo a una casilla vacía
-            bs.board[last_clicked.row][last_clicked.column] = {
-                type: 0,
-                value: 0,
-                color: last_clicked.piece.color,
-                possible_move: '',
-                img: ''
-            }
-    
-            // si a donde quiero mover la pieza tiene un color de fondo distinto al de la pieza que quiero mover
-            if(piece.color != last_clicked.piece.color){
-                last_clicked.piece.color = piece.color
-            }
-    
-            // muevo la pieza que quiero mover a la nueva posición y la convierto en dama
-            bs.board[row][column] = {
-                type: last_clicked.piece.type,
-                value: 5,
-                color: last_clicked.piece.color,
-                possible_move: '',
-                img: 'src/assets/images/reina-negra.png'
-            }
-    
-            // reseteo los posibles moviminetos
-            resetPossibleMoves()
-    
-            // paso de turno cambiando el jugador que le toca mover
-            player_turn.value *= -1
-            return true
-        }
         }
         return false
     }

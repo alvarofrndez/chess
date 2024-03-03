@@ -36,8 +36,8 @@ export const pieceStore = defineStore('piece', () => {
         }
 
         // uno hacia alante
-        if(board[row + piece.type][column].value == 0){
-            if(operationOnIndex(row + piece.type)){
+        if(operationOnIndex(row + piece.type)){
+            if(board[row + piece.type][column].value == 0){
                 can_pass = true
                 possible_moves.push({
                     row: row + piece.type,
@@ -48,8 +48,8 @@ export const pieceStore = defineStore('piece', () => {
 
         // dos hacia alante solo en salida
         if(initial){
-            if(board[row + piece.type * 2][column].value == 0 && can_pass){
-                if(operationOnIndex(row + piece.type * 2)){
+            if(operationOnIndex(row + piece.type * 2)){
+                if(board[row + piece.type * 2][column].value == 0 && can_pass){
                     possible_moves.push({
                         row: row + piece.type * 2,
                         column: column

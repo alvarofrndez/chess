@@ -16,7 +16,7 @@ export const userStore = defineStore('user', () => {
         username: undefined,
         name: undefined,
         token: undefined,
-        rating: undefined,
+        ranking: undefined,
         password: undefined,
         email: undefined,
         photo: '/src/assets/images/profile-photo.png',
@@ -436,5 +436,30 @@ export const userStore = defineStore('user', () => {
         return 999
     } 
 
-    return { user, isLoggued, singIn, login, logout, getPing}
+    async function newRanking(points){
+        
+        const response = await fetch(api_route + 'newRanking', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                points: user.value.ranking + points,
+                user_id: user.value.id
+            })
+        }).catch(() => {
+            toast_s.show('Ha ocurrido un error', 'error')
+            return false
+        })
+
+        if(response.status){
+            user.value.ranking += points
+            return true
+        }else{
+            toast_s.show('Ha ocurrido un error', 'error')
+            return false
+        }
+    }
+
+    return { user, isLoggued, singIn, login, logout, getPing, newRanking}
 })
