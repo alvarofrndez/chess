@@ -82,10 +82,8 @@ export const socketStore = defineStore('socket', () => {
 
             bs.board = message
 
-            // TODO: enviar el movimiento no solo al rival, si no a los dos para poder comprobar aqui quien ha hecho el movimiento, eso o directamente comprobar que turno es y añadir el movimiento a un jugador dependiendo del turno
-
+            pauseTimer(player_turn.value)
             player_turn.value *= -1
-            setTimer(player_turn.value)
         })
     }
 
@@ -153,8 +151,7 @@ export const socketStore = defineStore('socket', () => {
             clearInterval(timer_white.value.interval)
             timer_white.value.interval = null
             setTimer(1)
-        }
-        if (timer_black.value.turn) {
+        }else{
             clearInterval(timer_black.value.interval)
             timer_black.value.interval = null
             setTimer(-1)

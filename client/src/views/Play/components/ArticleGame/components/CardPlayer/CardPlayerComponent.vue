@@ -11,10 +11,10 @@
 
 <template>
     <section class='card-player-game' v-if='props.type == -1'>
-        <InfoPlayerComponent :player='sk_s.match.player_white' />
+        <InfoPlayerComponent :player='sk_s.match.player_white' type='-1'/>
     </section>
     <section class='card-player-game card-player-game-dark' v-else>
-        <InfoPlayerComponent :player='sk_s.match.player_black' />
+        <InfoPlayerComponent :player='sk_s.match.player_black' type='1'/>
     </section>
 </template>
 

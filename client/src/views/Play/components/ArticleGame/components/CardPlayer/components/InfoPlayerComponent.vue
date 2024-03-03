@@ -10,7 +10,7 @@
     const sk_s = socketStore()
 
     // variables
-    const { player } = defineProps(['player'])
+    const { player, type } = defineProps(['player', 'type'])
     let total = ref(0)
 
     async function getPing(){
@@ -21,6 +21,7 @@
         getPing()
     }, 2000)
 
+    console.log(player)
 </script>
 
 <template>
@@ -35,7 +36,8 @@
             </div>
             <div class='container-pieces'>
                 <div class='timer'>
-                    <p>{{sk_s.timer_white.time}}</p>
+                    <p v-if='type == -1'>{{sk_s.timer_white.time}}</p>
+                    <p v-else>{{sk_s.timer_black.time}}</p>
                 </div>
                 <ul class='captures'>
                     <CaptureComponent v-for='capture of player.captures' :key='capture.value + capture.color' :capture='capture'/>
@@ -55,7 +57,8 @@
     </article>
     <article v-else class='wrapper'>
         <span>{{ player.username }}</span>
-        <span><p>{{sk_s.timer_black.time}}</p></span>
+        <p v-if='type == -1'>{{sk_s.timer_white.time}}</p>
+        <p v-else>{{sk_s.timer_black.time}}</p>
         <span>{{ total < 10 ? 'verde' : total < 30 ? 'amarillo' : 'rojo'}}</span>
     </article>
 </template>
