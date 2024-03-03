@@ -459,29 +459,23 @@ export const socketStore = defineStore('socket', () => {
     
     function checkSituation(piece){
         // TODO: no comprueba bien todas las situaciones
-        let game_over = true
-    
+    console.log('-----------------------------------------')
         bs.board.forEach((line, i) => {
             line.forEach((celd, j) => {
                 if(celd.type * -1 == piece.type){
-                    let can_move = false;
-    
                     let posibles_moves = ps.calculateMoves(celd, i, j)
                     for(let move of posibles_moves){
                         // comprobar si el movimiento es ilegal
                         if(!isIlegal(celd, move.row, move.column)){
-                            can_move = true
+                            console.log(celd.value + ' se puede mover a ' + move.row + '' + move.column)
+                            return true
                         }
-                    }
-    
-                    if(can_move){
-                        game_over = false
                     }
                 }
             })
         })
     
-        return game_over
+        return false
     }
     
     function isCheck(board = bs.board, last_click = last_clicked){
@@ -495,10 +489,9 @@ export const socketStore = defineStore('socket', () => {
                     let possible_moves = ps.calculateMoves(piece, board.indexOf(line), line.indexOf(piece), board)
                                
                     for(const {row,column} of possible_moves){
-                        // console.log(piece.value, row, column)
                         // si en los posibles movimientos se encuentra el rey de los otros
                         if(board[row][column].value == 6 && board[row][column].type != type){
-                            // le estan ajciendo jaque
+                            // le estan haciendo jaque
                             return true
                         }
                     }
