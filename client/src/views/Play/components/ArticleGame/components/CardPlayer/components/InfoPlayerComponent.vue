@@ -20,8 +20,6 @@
     setInterval( () => {
         getPing()
     }, 2000)
-
-    console.log(player)
 </script>
 
 <template>
@@ -52,7 +50,7 @@
 
         <div class='container-options'>
             <button class='draw'>tablas</button>
-            <button class='resigne'>rendirse</button>
+            <button class='resigne' @click='sk_s.resigne'>rendirse</button>
         </div>
     </article>
     <article v-else class='wrapper'>

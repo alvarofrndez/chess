@@ -33,6 +33,23 @@ function newMatch(socket, message) {
     }
 }
 
+function resigne(message){
+    for(let match of matchs){
+        for(let player of match){
+            if(player.socket.id == message.player){
+                // compruebo quien es el que se ha rendido
+                let resigne = match.indexOf(player) == 0 ? -1 : 1
+
+                u_finishGame(resigne, match[1].socket)
+                u_finishGame(resigne, match[0].socket)
+
+                matchs.delete(match)
+                return
+            }
+        }
+    }
+}
+
 function cancelQueue(message) { 
     /**
      * Borra el usuario del set queue, por lo que lo saca de la cola
@@ -75,7 +92,8 @@ module.exports = {
     newMatch,
     cancelQueue,
     playerMove,
-    disconnect
+    disconnect,
+    resigne
 };
 
 
@@ -109,6 +127,12 @@ function u_playerMove(data, player){
     u_sendMessage(player)
 }
 
+function u_finishGame(loser, player){
+    message.event = 'finishGame'
+    message.data.loser = loser
+    u_sendMessage(player)
+}
+
 function u_sendToAll(socket){
     clients.forEach((client) => {
         if (/*client !== socket &&*/ client.connected) {
@@ -127,7 +151,6 @@ function u_sendPlayerActivity(socket){
 }
 
 function u_sendMessage(client){
-    console.log(client.id, message)
     client.emit(message.event, message.data)
 
     u_resetMessage()

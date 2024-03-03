@@ -7,6 +7,10 @@ module.exports = function(socket) {
         socket_ctrl.newMatch(socket, message);
     });
 
+    socket.on('resigne', (message) => {
+        socket_ctrl.resigne(message);
+    });
+
     socket.on('cancelQueue', (message) => {
         socket_ctrl.cancelQueue(message);
     });

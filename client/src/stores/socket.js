@@ -61,11 +61,11 @@ export const socketStore = defineStore('socket', () => {
     function initSocket(){
         socket = io('ws://localhost:3000')
 
-        socket.on('playerActivity', (message) => {
+        socket.on('playerActivity', message => {
             online.value = message
         })
 
-        socket.on('matchFind', (message) => {
+        socket.on('matchFind', message => {
             toast.show('partida encontrada', 'info')
             game.value = true
             searching.value = false
@@ -84,6 +84,22 @@ export const socketStore = defineStore('socket', () => {
 
             pauseTimer(player_turn.value)
             player_turn.value *= -1
+        })
+
+        socket.on('finishGame', message => {
+            /*
+            * cuando se fnaliza la partida se muestra el ganador
+            */
+
+            game.value = false
+
+            if(message.loser == -1){
+                console.log('han ganado las negras')
+            }else{
+                console.log('han ganado las blancas')
+            }
+
+            resetGame()
         })
     }
 
@@ -172,7 +188,7 @@ export const socketStore = defineStore('socket', () => {
     function playerMove(){
         // TODO: no funciona la coronacion 
         message.event = 'playerMove'
-        message.data = bs.board,
+        message.data = bs.board
 
         pauseTimer()
         sendMessage()
@@ -204,6 +220,47 @@ export const socketStore = defineStore('socket', () => {
 
     function customGame(){
 
+    }
+
+    function resigne(){
+        message.event = 'resigne'
+        message.data.player = socket.id
+
+        sendMessage()
+    }
+
+    function resetGame(){
+        match.value = {
+            player_type: undefined,
+            player_white: undefined,
+            player_black: undefined
+        }
+        last_clicked = {
+            piece: {type:undefined}
+        }
+        player_turn.value = -1
+        check = false
+        king_first_move = {
+            white: true,
+            black: true
+        }
+        timer_white.value = {
+            time: '',
+            min: 10,
+            sec: 0,
+            mili: 0,
+            turn: false,
+            interval: undefined
+        }
+        timer_black.value = {
+            time: '',
+            min: 10,
+            sec: 0,
+            mili: 0,
+            turn: false,
+            interval: undefined
+        }
+        bs.board = bs.createBoard()
     }
 
     function addMovePlayer(row, column){
@@ -626,5 +683,5 @@ export const socketStore = defineStore('socket', () => {
         }
     }
 
-    return{online, game, searching, expand, player, bs, last_clicked, player_turn, king_first_move, check, timer_white, timer_black, match, searchGame, cancelQueue, playerMove, initSocket, elementClicked, newGame, customGame}
+    return{online, game, searching, expand, player, bs, last_clicked, player_turn, king_first_move, check, timer_white, timer_black, match, searchGame, cancelQueue, playerMove, initSocket, elementClicked, newGame, customGame, resigne}
 })
