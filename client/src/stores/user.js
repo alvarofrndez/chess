@@ -267,6 +267,7 @@ export const userStore = defineStore('user', () => {
             user.value.photo ='/src/assets/images/profile-photo.png'
         }
         user.value.movements = [] 
+        user.value.captures = []
         
         setLocalToken()
         console.log(user.value)

@@ -10,7 +10,7 @@ export const boardStore = defineStore('board', () => {
   * alfil = 2
   * caballo = 3
   * torre = 4
-  * dama = 5
+  * reina = 5
   * rey = 6
   */
 

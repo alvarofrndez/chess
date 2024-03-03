@@ -2,6 +2,8 @@
     import { defineProps, ref } from 'vue'
     import { userStore } from '@/stores/user'
     import { socketStore } from '@/stores/socket'
+    import PlayerMoveComponent from './PlayerMoveComponent.vue'
+    import CaptureComponent from './CaptureComponent.vue'
 
     // stores
     const user_s = userStore()
@@ -31,19 +33,19 @@
                 <span>{{ player.username }}</span>
                 <span>{{ total < 10 ? 'verde' : total < 30 ? 'amarillo' : 'rojo'}}</span>
             </div>
-            <div class='moves'>
+            <div class='container-pieces'>
                 <div class='timer'>
                     <p>{{sk_s.timer_white.time}}</p>
                 </div>
-                <ul>
-                    <li v-for='move of player.movements' :key='move.piece + move.row + move.column'>
-                        <span>{{ move.piece.value }}</span>
-                        <span>{{ move.row }}</span>
-                        <span>{{ move.column }}</span>
-                    </li>
+                <ul class='captures'>
+                    <CaptureComponent v-for='capture of player.captures' :key='capture.value + capture.color' :capture='capture'/>
                 </ul>
             </div>
-            <div class='pieces'></div>
+            <div class='container-moves'>
+                <ul class='moves'>
+                    <PlayerMoveComponent v-for='move of player.movements' :key='move.piece.value + move.row + move.column' :move='move'/>
+                </ul>
+            </div>
         </div>
 
         <div class='container-options'>
@@ -96,10 +98,55 @@
                 @include flex(column);
             }
 
-            .moves{
+            .container-pieces{
+                // display
+                @include flex(column);
+
+                .captures{
+                    // size
+                    width: 100%;
+                    height: 80%;
+
+                    // margin
+                    padding: 0;
+                    margin: 0;
+
+                    // display
+                    display: flex;
+                    flex-direction: column;
+                    flex-wrap: wrap;
+
+                    // decoration
+                    list-style: none;
+                    overflow-x: scroll;
+                }
             }
 
-            .player{
+            .container-moves{
+                // display
+                @include flex(column);
+
+                // decoration
+                overflow: hidden;
+
+                .moves{
+                    // size
+                    width: 100%;
+                    height: 80%;
+
+                    // margin
+                    padding: 0;
+                    margin: 0;
+
+                    // display
+                    display: flex;
+                    flex-direction: column;
+                    flex-wrap: wrap;
+
+                    // decoration
+                    list-style: none;
+                    overflow-x: scroll;
+                }
             }
         }
 

@@ -209,6 +209,30 @@ export const socketStore = defineStore('socket', () => {
 
     }
 
+    function addMovePlayer(row, column){
+        if(match.value.player_type == '-1'){
+            match.value.player_white.movements.push({
+                piece: last_clicked.piece,
+                row: row,
+                column: column
+            })
+        }else if(match.value.player_type == '1'){
+            match.value.player_black.movements.push({
+                piece: last_clicked.piece,
+                row: row,
+                column: column
+            })
+        }
+    }
+
+    function addCapture(piece){
+        if(match.value.player_type == '-1'){
+            match.value.player_white.captures.push(piece)
+        }else if(match.value.player_type == '1'){
+            match.value.player_black.captures.push(piece)
+        }
+    }
+
     // FUNCIONALIDAD DEL TABLERO
 
     function elementClicked(piece, row, column){
@@ -282,18 +306,12 @@ export const socketStore = defineStore('socket', () => {
                 // notifico que se ha hecho un movimiento
                 playerMove()
 
-                if(match.value.player_type == '-1'){
-                    match.value.player_white.movements.push({
-                        piece: last_clicked.piece,
-                        row: row,
-                        column: column
-                    })
-                }else if(match.value.player_type == '1'){
-                    match.value.player_black.movements.push({
-                        piece: last_clicked.piece,
-                        row: row,
-                        column: column
-                    })
+                // añado el movimiento a los movimientos del jugador
+                addMovePlayer(row,column)
+
+                // en caso de que capture una pieza la añado a las piezas capturadas
+                if(piece.type == player_turn.value){
+                    addCapture(piece)
                 }
             }
             // selección - si la pieza que se ha pulsado es del tipo del jugador que mueve
