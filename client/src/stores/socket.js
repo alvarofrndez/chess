@@ -80,16 +80,9 @@ export const socketStore = defineStore('socket', () => {
             * y se iguala el de este jugador a ese cambiando el turno
             */
 
-            bs.board = message.board
+            bs.board = message
 
             // TODO: enviar el movimiento no solo al rival, si no a los dos para poder comprobar aqui quien ha hecho el movimiento, eso o directamente comprobar que turno es y añadir el movimiento a un jugador dependiendo del turno
-            if(player_turn.value == match.value.player_white.id){
-                match.value.player_black.movements.push(message.move)
-            }else{
-                match.value.player_white.movements.push(message.move)
-            }
-
-            console.log(message.move)
 
             player_turn.value *= -1
             setTimer(player_turn.value)
@@ -179,13 +172,10 @@ export const socketStore = defineStore('socket', () => {
         sendMessage()
     }
 
-    function playerMove(move){
+    function playerMove(){
         // TODO: no funciona la coronacion 
         message.event = 'playerMove'
-        message.data = {
-            board: bs.board,
-            move: move
-        }
+        message.data = bs.board,
 
         pauseTimer()
         sendMessage()
@@ -290,12 +280,21 @@ export const socketStore = defineStore('socket', () => {
                 }
     
                 // notifico que se ha hecho un movimiento
-                playerMove({
-                    piece: last_clicked.piece,
-                    row: row,
-                    column: column
-                })
+                playerMove()
 
+                if(match.value.player_type == '-1'){
+                    match.value.player_white.movements.push({
+                        piece: last_clicked.piece,
+                        row: row,
+                        column: column
+                    })
+                }else if(match.value.player_type == '1'){
+                    match.value.player_black.movements.push({
+                        piece: last_clicked.piece,
+                        row: row,
+                        column: column
+                    })
+                }
             }
             // selección - si la pieza que se ha pulsado es del tipo del jugador que mueve
             else if(player_turn.value == piece.type){
